@@ -114,7 +114,14 @@ const imageScreen = document.getElementById("imageScreen");
 const lockScreen = document.getElementById("lockScreen");
 const hahaScreen = document.getElementById("hahaScreen");
 
-continueBtn.addEventListener("click", () => {
+continueBtn.addEventListener("click", async () => {
+
+    // Xin fullscreen sau thao tác click
+    try {
+        await document.documentElement.requestFullscreen();
+    } catch (error) {
+        console.log("Fullscreen bị từ chối:", error);
+    }
 
     // Ẩn màn hình ban đầu
     startScreen.style.display = "none";
@@ -127,13 +134,9 @@ continueBtn.addEventListener("click", () => {
 
     // Sau 4 giây
     setTimeout(() => {
-
         imageScreen.style.display = "none";
         lockScreen.style.display = "none";
-
-        // Hiện HAHA
         hahaScreen.style.display = "flex";
-
     }, 4000);
 });
 </script>
