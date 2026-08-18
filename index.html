@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Continue</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    html, body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        font-family: Arial, sans-serif;
+    }
+
+    body {
+        background: #111;
+    }
+
+    /* Màn hình ban đầu */
+    #startScreen {
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #continueBtn {
+        padding: 15px 35px;
+        font-size: 22px;
+        cursor: pointer;
+        border: none;
+        border-radius: 8px;
+    }
+
+    /* Màn hình ảnh */
+    #imageScreen {
+        display: none;
+        position: fixed;
+        inset: 0;
+        width: 100vw;
+        height: 100vh;
+        background: black;
+        justify-content: center;
+        align-items: center;
+        z-index: 10;
+    }
+
+    #imageScreen img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+
+    /* Lớp khóa tương tác */
+    #lockScreen {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        background: transparent;
+        cursor: not-allowed;
+    }
+
+    /* Màn hình HAHA */
+    #hahaScreen {
+        display: none;
+        position: fixed;
+        inset: 0;
+        width: 100vw;
+        height: 100vh;
+        background: black;
+        color: white;
+        justify-content: center;
+        align-items: center;
+        font-size: 80px;
+        font-weight: bold;
+        z-index: 20;
+    }
+</style>
+</head>
+
+<body>
+
+<!-- Màn hình ban đầu -->
+<div id="startScreen">
+    <button id="continueBtn">Tiếp tục</button>
+</div>
+
+<!-- Màn hình ảnh -->
+<div id="imageScreen">
+    <img src="anh.jpg" alt="Image">
+</div>
+
+<!-- Khóa thao tác trong 4 giây -->
+<div id="lockScreen"></div>
+
+<!-- Màn hình cuối -->
+<div id="hahaScreen">
+    HAHAHA 😈
+</div>
+
+<script>
+const continueBtn = document.getElementById("continueBtn");
+const startScreen = document.getElementById("startScreen");
+const imageScreen = document.getElementById("imageScreen");
+const lockScreen = document.getElementById("lockScreen");
+const hahaScreen = document.getElementById("hahaScreen");
+
+continueBtn.addEventListener("click", () => {
+
+    // Ẩn màn hình ban đầu
+    startScreen.style.display = "none";
+
+    // Hiện ảnh
+    imageScreen.style.display = "flex";
+
+    // Khóa tương tác
+    lockScreen.style.display = "block";
+
+    // Sau 4 giây
+    setTimeout(() => {
+
+        imageScreen.style.display = "none";
+        lockScreen.style.display = "none";
+
+        // Hiện HAHA
+        hahaScreen.style.display = "flex";
+
+    }, 4000);
+});
+</script>
+
+</body>
+</html>
