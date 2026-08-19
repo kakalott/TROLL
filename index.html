@@ -3,143 +3,254 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Continue</title>
-
+<title>Chuyến Xe Lịch Sử</title>
 <style>
-    * {
-        box-sizing: border-box;
+    /* CSS CƠ BẢN */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, sans-serif; background: #000; overflow: hidden; color: white; }
+    button { padding: 15px 35px; font-size: 22px; cursor: pointer; border: none; border-radius: 8px; font-weight: bold; background: #ff4757; color: white; transition: 0.3s; z-index: 50; position: relative;}
+    button:hover { background: #ff6b81; transform: scale(1.05); }
+
+    /* QUẢN LÝ CÁC MÀN HÌNH (SCENES) */
+    .scene { position: fixed; inset: 0; display: none; justify-content: center; align-items: center; flex-direction: column; width: 100vw; height: 100vh; background-size: cover; background-position: center; transition: opacity 1s ease; opacity: 0;}
+    .scene.active { display: flex; opacity: 1;}
+
+    /* SCENE 1: INTRO */
+    #scene-intro { background-image: url('bg_cach_mang.jpg'); } /* Đổi tên ảnh nền ở đây */
+    
+    /* SCENE 2: HISTORY */
+    #scene-history { background-image: url('bg_lich_su.jpg'); } /* Nền lịch sử */
+    #bacho-img { height: 80vh; object-fit: contain; z-index: 2; }
+    #corner-img { position: absolute; bottom: 20px; right: 20px; width: 200px; opacity: 0.5; transition: opacity 1s ease; z-index: 1;}
+    #btn-tieptuc { display: none; position: absolute; bottom: 10%; z-index: 10; } /* Nút tiếp tục ẩn lúc đầu */
+
+    /* SCENE 3: LỖI (BSOD) */
+    #scene-error { background-color: #0078D7; color: white; font-family: 'Courier New', Courier, monospace; text-align: left; padding: 50px; align-items: flex-start; justify-content: flex-start; }
+    
+    /* SCENE 4: TROLL MEME */
+    #scene-meme { background: #000; text-align: center; }
+    #troll-text { font-size: 50px; font-weight: bold; margin-top: 20px; transition: 0.5s; }
+
+    /* SCENE 5: CHÚC MỪNG (Tối dần hiện tim) */
+    #scene-wishes { background: #000; text-align: center; }
+    #heart-img { width: 150px; animation: heartbeat 1s infinite alternate; margin-bottom: 30px; }
+    #wish-text { font-size: 30px; line-height: 1.5; padding: 0 20px; min-height: 100px; transition: opacity 0.5s; }
+    #cake-container { display: none; flex-direction: column; align-items: center; margin-top: 20px; }
+    #cake-img { width: 200px; margin-bottom: 20px; }
+    
+    @keyframes heartbeat {
+        from { transform: scale(1); }
+        to { transform: scale(1.1); }
     }
 
-    html, body {
-        margin: 0;
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-        font-family: Arial, sans-serif;
-    }
-
-    body {
-        background: #111;
-    }
-
-    /* Màn hình ban đầu */
-    #startScreen {
-        width: 100vw;
-        height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    #continueBtn {
-        padding: 15px 35px;
-        font-size: 22px;
-        cursor: pointer;
-        border: none;
-        border-radius: 8px;
-    }
-
-    /* Màn hình ảnh */
-    #imageScreen {
-    position: fixed;
-    inset: 0;
-    width: 100vw;
-    height: 100vh;
-    background: black;
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 10;
-   }
-
-   #imageScreen img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-   }
-
-    /* Lớp khóa tương tác */
-    #lockScreen {
-        display: none;
-        position: fixed;
-        inset: 0;
-        z-index: 9999;
-        background: transparent;
-        cursor: not-allowed;
-    }
-
-    /* Màn hình HAHA */
-    #hahaScreen {
-        display: none;
-        position: fixed;
-        inset: 0;
-        width: 100vw;
-        height: 100vh;
-        background: black;
-        color: white;
-        justify-content: center;
-        align-items: center;
-        font-size: 80px;
-        font-weight: bold;
-        z-index: 20;
-    }
+    /* SCENE 6: PARTY */
+    #scene-party { background: #111; }
+    .dancing-meme { position: absolute; width: 150px; z-index: 5; }
 </style>
 </head>
-
 <body>
 
-<!-- Màn hình ban đầu -->
-<div id="startScreen">
-    <button id="continueBtn">Tiếp tục</button>
-</div>
+    <!-- 1. MÀN HÌNH BẮT ĐẦU -->
+    <div id="scene-intro" class="scene active">
+        <button id="btn-timhieu">Tìm hiểu</button>
+    </div>
 
-<!-- Màn hình ảnh -->
-<div id="imageScreen">
-    <img src="anh.jpg" alt="Image">
-</div>
+    <!-- 2. MÀN HÌNH LỊCH SỬ & NGHE NHẠC -->
+    <div id="scene-history" class="scene">
+        <img id="corner-img" src="" alt="Góc mờ">
+        <img id="bacho-img" src="bacho.png" alt="Bác Hồ">
+        <button id="btn-tieptuc">Tiếp tục</button>
+    </div>
 
-<!-- Khóa thao tác trong 4 giây -->
-<div id="lockScreen"></div>
+    <!-- 3. MÀN HÌNH LỖI MÁY TÍNH -->
+    <div id="scene-error" class="scene">
+        <h1 style="font-size: 100px; margin: 0;">:(</h1>
+        <h2>Your PC ran into a problem and needs to restart.</h2>
+        <p>We're just collecting some error info, and then we'll restart for you.</p>
+        <p>0% complete</p>
+    </div>
 
-<!-- Màn hình cuối -->
-<div id="hahaScreen">
-    HAHAHA 😈
-</div>
+    <!-- 4. MÀN HÌNH MEME LỪA ĐẢO -->
+    <div id="scene-meme" class="scene">
+        <img id="meme-troll-img" src="meme_troll.jpg" alt="Meme" width="300">
+        <div id="troll-text">Hehe</div>
+    </div>
+
+    <!-- 5. MÀN HÌNH LỜI CHÚC & BÁNH SINH NHẬT -->
+    <div id="scene-wishes" class="scene">
+        <img id="heart-img" src="heart.png" alt="Trái tim">
+        <div id="wish-text"></div>
+        <div id="cake-container">
+            <img id="cake-img" src="cake.png" alt="Bánh sinh nhật">
+            <button id="btn-thoinen">Thổi nến 🎂</button>
+        </div>
+    </div>
+
+    <!-- 6. MÀN HÌNH PARTY NẢY MÚA -->
+    <div id="scene-party" class="scene">
+        <h1 style="z-index: 10; font-size: 50px; text-shadow: 2px 2px 5px red;">CHÚC MỪNG SINH NHẬT!!! 🎉</h1>
+        <!-- Gif sẽ được render bằng JS vào đây -->
+    </div>
 
 <script>
-const continueBtn = document.getElementById("continueBtn");
-const startScreen = document.getElementById("startScreen");
-const imageScreen = document.getElementById("imageScreen");
-const lockScreen = document.getElementById("lockScreen");
-const hahaScreen = document.getElementById("hahaScreen");
+    // ==========================================
+    // 1. CẤU HÌNH TÀI NGUYÊN (QUẢN LÝ DỄ NHẤT Ở ĐÂY)
+    // ==========================================
+    const CONFIG = {
+        images: {
+            cornerPhotos: ["goc1.png", "goc2.png", "goc3.jpg"], // Các ảnh thay đổi ở góc màn hình 2
+            partyGifs: ["dance1.gif", "dance2.gif", "dance3.gif", "dance4.gif"] // Meme nhảy múa màn cuối
+        },
+        audio: {
+            history1: "nhac_lich_su_1.mp3",
+            history2: "nhac_lich_su_2.mp3",
+            waitMusic: "nhac_doi.mp3",
+            birthdayBg: "nhac_sinh_nhat.mp3",
+            partyList: ["party1.mp3", "party2.mp3", "party3.mp3"]
+        },
+        wishes: [
+            "Đang tải dữ liệu...",
+            "Đùa chút thôi!",
+            "Chúc mừng sinh nhật nhé!",
+            "Tuổi mới thật nhiều niềm vui...",
+            "Thành công trong học tập và công việc!",
+            "Và mãi mãi hạnh phúc nha. Bấm thổi nến đi!" // Lời chúc cuối
+        ]
+    };
 
-continueBtn.addEventListener("click", async () => {
+    // ==========================================
+    // 2. BIẾN TOÀN CỤC & HÀM CHUYỂN CẢNH
+    // ==========================================
+    const scenes = document.querySelectorAll('.scene');
+    
+    // Đối tượng Audio
+    let audioH1 = new Audio(CONFIG.audio.history1);
+    let audioH2 = new Audio(CONFIG.audio.history2);
+    let audioWait = new Audio(CONFIG.audio.waitMusic);
+    let audioBDay = new Audio(CONFIG.audio.birthdayBg);
+    let audioParty = new Audio(CONFIG.audio.partyList[0]);
+    audioWait.loop = true; // Nhạc chờ lặp lại
 
-    // Xin fullscreen sau thao tác click
-    try {
-        await document.documentElement.requestFullscreen();
-    } catch (error) {
-        console.log("Fullscreen bị từ chối:", error);
+    function switchScene(sceneId) {
+        scenes.forEach(s => s.classList.remove('active'));
+        document.getElementById(sceneId).classList.add('active');
     }
 
-    // Ẩn màn hình ban đầu
-    startScreen.style.display = "none";
+    // ==========================================
+    // 3. LOGIC CÁC GIAI ĐOẠN
+    // ==========================================
 
-    // Hiện ảnh
-    imageScreen.style.display = "flex";
+    // GIAI ĐOẠN 1 -> 2: Click Tìm hiểu
+    document.getElementById('btn-timhieu').addEventListener('click', async () => {
+        try { await document.documentElement.requestFullscreen(); } catch (e) {}
+        
+        switchScene('scene-history');
+        
+        // Bắt đầu chuỗi nhạc
+        audioH1.play();
+        
+        // Xử lý góc mờ mờ thay đổi ảnh
+        let cornerIdx = 0;
+        const cornerImg = document.getElementById('corner-img');
+        cornerImg.src = CONFIG.images.cornerPhotos[0];
+        setInterval(() => {
+            cornerIdx = (cornerIdx + 1) % CONFIG.images.cornerPhotos.length;
+            cornerImg.style.opacity = 0; // Hiệu ứng mờ đi
+            setTimeout(() => {
+                cornerImg.src = CONFIG.images.cornerPhotos[cornerIdx];
+                cornerImg.style.opacity = 0.5; // Hiện lên lại
+            }, 500);
+        }, 3000); // Đổi ảnh mỗi 3 giây
 
-    // Khóa tương tác
-    lockScreen.style.display = "block";
+        // Hết nhạc 1 -> chạy nhạc 2
+        audioH1.onended = () => audioH2.play();
+        
+        // Hết nhạc 2 -> chạy nhạc chờ + hiện nút
+        audioH2.onended = () => {
+            audioWait.play();
+            document.getElementById('btn-tieptuc').style.display = 'block';
+        };
+    });
 
-    // Sau 4 giây
-    setTimeout(() => {
-        imageScreen.style.display = "none";
-        lockScreen.style.display = "none";
-        hahaScreen.style.display = "flex";
-    }, 4000);
-});
+    // GIAI ĐOẠN 2 -> 3: Click Tiếp tục -> Lỗi máy tính
+    document.getElementById('btn-tieptuc').addEventListener('click', () => {
+        audioWait.pause(); // Tắt nhạc chờ
+        switchScene('scene-error');
+        
+        // Đợi 4 giây ở màn hình lỗi
+        setTimeout(() => {
+            switchScene('scene-meme');
+            startMemeSequence();
+        }, 4000);
+    });
+
+    // GIAI ĐOẠN 4: Chữ Hehe -> Bị lừa rồi
+    function startMemeSequence() {
+        const textEl = document.getElementById('troll-text');
+        setTimeout(() => {
+            textEl.textContent = "Bị lừa rồi nha!!!";
+            textEl.style.color = "red";
+        }, 2000); // Đợi 2s đổi chữ
+
+        setTimeout(() => {
+            switchScene('scene-wishes');
+            startBirthdaySequence();
+        }, 4500); // Đợi thêm 2.5s rồi qua màn sinh nhật
+    }
+
+    // GIAI ĐOẠN 5: Hiện lời chúc + Bánh sinh nhật
+    function startBirthdaySequence() {
+        audioBDay.play();
+        const wishEl = document.getElementById('wish-text');
+        let wishIdx = 0;
+
+        // Cập nhật lời chúc mỗi 3.5 giây
+        let wishInterval = setInterval(() => {
+            wishEl.style.opacity = 0;
+            setTimeout(() => {
+                wishEl.textContent = CONFIG.wishes[wishIdx];
+                wishEl.style.opacity = 1;
+                
+                if (wishIdx === CONFIG.wishes.length - 1) {
+                    clearInterval(wishInterval); // Dừng chạy lời chúc
+                    document.getElementById('cake-container').style.display = 'flex'; // Hiện bánh & Nút
+                } else {
+                    wishIdx++;
+                }
+            }, 500); // 0.5s để đổi text lúc mờ
+        }, 3500); 
+    }
+
+    // GIAI ĐOẠN 6: Click Thổi Nến -> Bay nhảy
+    document.getElementById('btn-thoinen').addEventListener('click', () => {
+        audioBDay.pause(); // Tắt nhạc sinh nhật nhẹ nhàng
+        switchScene('scene-party');
+        
+        // Chạy list nhạc quẩy luân phiên
+        let currentPartyTrack = 0;
+        audioParty.play();
+        audioParty.onended = () => {
+            currentPartyTrack = (currentPartyTrack + 1) % CONFIG.audio.partyList.length;
+            audioParty.src = CONFIG.audio.partyList[currentPartyTrack];
+            audioParty.play();
+        };
+
+        // Rải ảnh gif ngẫu nhiên khắp màn hình
+        const partyScene = document.getElementById('scene-party');
+        for (let i = 0; i < 15; i++) {
+            let img = document.createElement('img');
+            // Random gif
+            img.src = CONFIG.images.partyGifs[Math.floor(Math.random() * CONFIG.images.partyGifs.length)];
+            img.className = 'dancing-meme';
+            
+            // Random vị trí
+            img.style.top = Math.random() * 80 + 'vh';
+            img.style.left = Math.random() * 80 + 'vw';
+            
+            partyScene.appendChild(img);
+        }
+    });
+
 </script>
-
 </body>
 </html>
