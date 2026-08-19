@@ -3,30 +3,16 @@
 <head>
 <meta charset="UTF-8">
 
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 <title>Chuyến Xe Lịch Sử</title>
 
 <style>
+/* CƠ BẢN */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: Arial, sans-serif; background: #000; overflow: hidden; color: white; }
 
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-body {
-    font-family: Arial, sans-serif;
-    background: #000;
-    overflow: hidden;
-    color: white;
-}
-
-/* ========================================= */
-/* NÚT                                      */
-/* ========================================= */
-
+/* NÚT */
 button {
     padding: 2vh 4vw;
     font-size: 3.5vmin;
@@ -41,2951 +27,662 @@ button {
     position: relative;
     box-shadow: 0 0 1.5vmin rgba(255, 0, 0, 0.4);
 }
-
 button:hover {
     background: #ff3333;
     transform: scale(1.05);
     box-shadow: 0 0 2.5vmin rgba(255, 0, 0, 0.8);
 }
 
-/* ========================================= */
-/* THÔNG BÁO XOAY NGANG ĐIỆN THOẠI          */
-/* ========================================= */
-
+/* THÔNG BÁO XOAY NGANG ĐIỆN THOẠI */
 #rotate-message {
-    display: none;
-
+    display: none; /* Mặc định ẩn để hiện nút bấm trước */
     position: fixed;
     inset: 0;
-
     width: 100vw;
-    height: 100vh;
-
+    height: 100dvh;
     z-index: 999999;
-
     background: #000;
-
     color: white;
-
     align-items: center;
     justify-content: center;
-
     flex-direction: column;
-
     text-align: center;
-
     padding: 30px;
 }
-
 #rotate-message .rotate-icon {
     font-size: 20vmin;
-
     margin-bottom: 5vh;
-
     animation: rotatePhone 2s infinite ease-in-out;
 }
-
-#rotate-message h2 {
-    font-size: 7vmin;
-    margin-bottom: 2vh;
-}
-
-#rotate-message p {
-    font-size: 4vmin;
-    line-height: 1.5;
-    color: #ccc;
-}
-
-/* Điện thoại dọc: thông báo phủ toàn màn hình và khóa nội dung phía sau */
-body.mobile-portrait #rotate-message {
-    display: flex !important;
-}
-
-body.mobile-portrait .scene {
-    pointer-events: none;
-}
-
-
+#rotate-message h2 { font-size: 7vmin; margin-bottom: 2vh; }
+#rotate-message p { font-size: 4vmin; line-height: 1.5; color: #ccc; }
 @keyframes rotatePhone {
-
-    0% {
-        transform: rotate(0deg);
-    }
-
-    40% {
-        transform: rotate(90deg);
-    }
-
-    60% {
-        transform: rotate(90deg);
-    }
-
-    100% {
-        transform: rotate(0deg);
-    }
-
+    0% { transform: rotate(0deg); }
+    40% { transform: rotate(90deg); }
+    60% { transform: rotate(90deg); }
+    100% { transform: rotate(0deg); }
 }
 
-/* ========================================= */
-/* SCENE CHUNG                              */
-/* ========================================= */
-
+/* SCENE CHUNG */
 .scene {
     position: fixed;
     inset: 0;
-
     display: none;
-
     justify-content: center;
     align-items: center;
-
     flex-direction: column;
-
     width: 100vw;
-    height: 100vh;
-
+    height: 100dvh; /* Dùng dvh để fix lỗi bị thanh địa chỉ che trên mobile */
     background-size: cover;
     background-position: center;
-
     transition: opacity 1s ease;
-
     opacity: 0;
 }
+.scene.active { display: flex; opacity: 1; }
 
-.scene.active {
-    display: flex;
-    opacity: 1;
-}
-
-/* ========================================= */
-/* SCENE 1 & 2                              */
-/* ========================================= */
-
-#scene-intro,
-#scene-history {
-    background-image: url('ki-niem-81-nam.png');
-    position: relative;
-}
-
+/* SCENE 1 & 2 */
+#scene-intro, #scene-history { background-image: url('ki-niem-81-nam.png'); position: relative; }
 #slide-container {
     position: absolute;
-
     right: 8vw;
     top: 50%;
-
     transform: translateY(-50%);
-
     width: 45vw;
-
     aspect-ratio: 4 / 3;
-
     z-index: 2;
 }
-
 #slide-img {
     width: 100%;
     height: 100%;
-
     object-fit: cover;
-
-    -webkit-mask-image:
-        radial-gradient(
-            ellipse at center,
-            rgba(0, 0, 0, 1) 50%,
-            rgba(0, 0, 0, 0) 95%
-        );
-
-    mask-image:
-        radial-gradient(
-            ellipse at center,
-            rgba(0, 0, 0, 1) 50%,
-            rgba(0, 0, 0, 0) 95%
-        );
-
+    -webkit-mask-image: radial-gradient(ellipse at center, rgba(0, 0, 0, 1) 50%, rgba(0, 0, 0, 0) 95%);
+    mask-image: radial-gradient(ellipse at center, rgba(0, 0, 0, 1) 50%, rgba(0, 0, 0, 0) 95%);
     transition: opacity 0.8s ease-in-out;
 }
+#btn-tieptuc { display: none; position: absolute; bottom: 8vh; left: 50%; transform: translateX(-50%); z-index: 10; }
 
-#btn-tieptuc {
-    display: none;
+/* SCENE 3 & 4 */
+#scene-error { background: #000; padding: 0; }
+#error-img { width: 100vw; height: 100dvh; object-fit: cover; }
+#scene-meme { background: #000; text-align: center; }
+#meme-troll-img { width: 35vmin; }
+#troll-text { font-size: 6vmin; font-weight: bold; margin-top: 3vh; transition: 0.5s; }
 
-    position: absolute;
-
-    bottom: 8vh;
-    left: 50%;
-
-    transform: translateX(-50%);
-
-    z-index: 10;
-}
-
-/* ========================================= */
-/* SCENE 3 & 4                              */
-/* ========================================= */
-
-#scene-error {
-    background: #000;
-    padding: 0;
-}
-
-#error-img {
-    width: 100vw;
-    height: 100vh;
-
-    object-fit: cover;
-}
-
-#scene-meme {
-    background: #000;
-    text-align: center;
-}
-
-#meme-troll-img {
-    width: 35vmin;
-}
-
-#troll-text {
-    font-size: 6vmin;
-
-    font-weight: bold;
-
-    margin-top: 3vh;
-
-    transition: 0.5s;
-}
-
-/* ========================================= */
-/* SCENE 5: CHÚC MỪNG                      */
-/* ========================================= */
-
-#scene-wishes {
-    background-color: #000;
-
-    background-size: cover;
-    background-position: center;
-
-    position: relative;
-}
-
-#wish-canvas {
-    position: absolute;
-
-    inset: 0;
-
-    width: 100%;
-    height: 100%;
-
-    z-index: 1;
-
-    pointer-events: none;
-}
-
-#sticker-img-left {
-    position: absolute;
-
-    bottom: 3vh;
-    left: 3vw;
-
-    width: 20vmin;
-
-    z-index: 3;
-}
-
-#sticker-img-right {
-    position: absolute;
-
-    bottom: 3vh;
-    right: 3vw;
-
-    width: 20vmin;
-
-    z-index: 3;
-
-    transform: scaleX(-1);
-}
-
+/* SCENE 5: CHÚC MỪNG */
+#scene-wishes { background-color: #000; background-size: cover; background-position: center; position: relative; }
+#wish-canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+#sticker-img-left { position: absolute; bottom: 3vh; left: 3vw; width: 20vmin; z-index: 3; }
+#sticker-img-right { position: absolute; bottom: 3vh; right: 3vw; width: 20vmin; z-index: 3; transform: scaleX(-1); }
 #html-wish-text {
     position: absolute;
-
-    top: 40%;
-    left: 50%;
-
+    top: 40%; left: 50%;
     transform: translate(-50%, -50%);
-
-    font-size: 5vmin;
-
-    font-weight: bold;
-
-    color: #ffebf0;
-
-    text-shadow:
-        0 0 1.5vmin #e180a3,
-        0 0 0.5vmin #fff;
-
-    text-align: center;
-
-    width: 80vw;
-
-    z-index: 2;
-
-    opacity: 0;
-
-    transition: opacity 0.8s ease-in-out;
+    font-size: 5vmin; font-weight: bold; color: #ffebf0;
+    text-shadow: 0 0 1.5vmin #e180a3, 0 0 0.5vmin #fff;
+    text-align: center; width: 80vw; z-index: 2; opacity: 0; transition: opacity 0.8s ease-in-out;
 }
+#cake-container { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); flex-direction: column; align-items: center; z-index: 10; }
 
-#cake-container {
-    display: none;
-
-    position: absolute;
-
-    top: 50%;
-    left: 50%;
-
-    transform: translate(-50%, -50%);
-
-    flex-direction: column;
-
-    align-items: center;
-
-    z-index: 10;
-}
-
-/* ========================================= */
-/* BÁNH SINH NHẬT HTML & CSS               */
-/* ========================================= */
-
-.html-cake {
-    position: relative;
-
-    width: 25vmin;
-    height: 12vmin;
-
-    margin-bottom: 2vh;
-}
-
-.cake-sponge {
-    position: absolute;
-
-    bottom: 0;
-
-    width: 100%;
-    height: 100%;
-
-    background-color: #ff9eaa;
-
-    border-radius: 2vmin;
-
-    box-shadow:
-        inset 0 -2vmin 0 rgba(0,0,0,0.15);
-}
-
-.cake-icing {
-    position: absolute;
-
-    top: 0;
-
-    width: 100%;
-    height: 4vmin;
-
-    background-color: #fff;
-
-    border-radius: 2vmin 2vmin 0 0;
-}
-
-.cake-drip {
-    position: absolute;
-
-    top: 3vmin;
-
-    background-color: #fff;
-
-    width: 3.5vmin;
-
-    border-radius: 50%;
-}
-
-.cake-candle {
-    position: absolute;
-
-    top: -7vmin;
-    left: 50%;
-
-    transform: translateX(-50%);
-
-    width: 2.5vmin;
-    height: 8vmin;
-
-    background:
-        repeating-linear-gradient(
-            45deg,
-            #fff,
-            #fff 0.5vmin,
-            #ff4757 0.5vmin,
-            #ff4757 1vmin
-        );
-
-    border-radius: 0.5vmin;
-
-    z-index: 2;
-}
-
-.cake-flame {
-    position: absolute;
-
-    top: -4.5vmin;
-    left: 50%;
-
-    transform: translateX(-50%);
-
-    width: 2.5vmin;
-    height: 4.5vmin;
-
-    background: #ffd32a;
-
-    border-radius: 50% 50% 20% 20%;
-
-    box-shadow:
-        0 0 2vmin #ff9f43,
-        0 0 4vmin #ff9f43;
-
-    animation: flicker 0.15s infinite alternate;
-
-    transition: opacity 0.5s ease;
-}
-
-.cake-flame.off {
-    opacity: 0;
-
-    animation: none;
-
-    box-shadow: none;
-}
-
-.smoke {
-    position: absolute;
-
-    top: -5vmin;
-    left: 50%;
-
-    transform: translateX(-50%);
-
-    width: 1vmin;
-    height: 1vmin;
-
-    background: #ccc;
-
-    border-radius: 50%;
-
-    opacity: 0;
-
-    transition:
-        opacity 0.5s,
-        transform 1s ease-out;
-}
-
-.cake-flame.off + .smoke {
-    opacity: 0.5;
-
-    transform:
-        translate(-50%, -5vmin)
-        scale(3);
-}
-
+/* BÁNH SINH NHẬT HTML & CSS */
+.html-cake { position: relative; width: 25vmin; height: 12vmin; margin-bottom: 2vh; }
+.cake-sponge { position: absolute; bottom: 0; width: 100%; height: 100%; background-color: #ff9eaa; border-radius: 2vmin; box-shadow: inset 0 -2vmin 0 rgba(0,0,0,0.15); }
+.cake-icing { position: absolute; top: 0; width: 100%; height: 4vmin; background-color: #fff; border-radius: 2vmin 2vmin 0 0; }
+.cake-drip { position: absolute; top: 3vmin; background-color: #fff; width: 3.5vmin; border-radius: 50%; }
+.cake-candle { position: absolute; top: -7vmin; left: 50%; transform: translateX(-50%); width: 2.5vmin; height: 8vmin; background: repeating-linear-gradient(45deg, #fff, #fff 0.5vmin, #ff4757 0.5vmin, #ff4757 1vmin); border-radius: 0.5vmin; z-index: 2; }
+.cake-flame { position: absolute; top: -4.5vmin; left: 50%; transform: translateX(-50%); width: 2.5vmin; height: 4.5vmin; background: #ffd32a; border-radius: 50% 50% 20% 20%; box-shadow: 0 0 2vmin #ff9f43, 0 0 4vmin #ff9f43; animation: flicker 0.15s infinite alternate; transition: opacity 0.5s ease; }
+.cake-flame.off { opacity: 0; animation: none; box-shadow: none; }
+.smoke { position: absolute; top: -5vmin; left: 50%; transform: translateX(-50%); width: 1vmin; height: 1vmin; background: #ccc; border-radius: 50%; opacity: 0; transition: opacity 0.5s, transform 1s ease-out; }
+.cake-flame.off + .smoke { opacity: 0.5; transform: translate(-50%, -5vmin) scale(3); }
 @keyframes flicker {
-
-    0% {
-        transform:
-            translateX(-50%)
-            scale(1)
-            rotate(-3deg);
-
-        opacity: 0.9;
-    }
-
-    100% {
-        transform:
-            translateX(-50%)
-            scale(1.1)
-            rotate(3deg);
-
-        opacity: 1;
-    }
-
+    0% { transform: translateX(-50%) scale(1) rotate(-3deg); opacity: 0.9; }
+    100% { transform: translateX(-50%) scale(1.1) rotate(3deg); opacity: 1; }
 }
 
-/* ========================================= */
-/* SCENE 6: PARTY                          */
-/* ========================================= */
+/* SCENE 6: PARTY */
+#scene-party { background-color: #111; background-size: cover; background-position: center; position: relative; overflow: hidden; }
+#fireworks-canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; mix-blend-mode: screen; }
+.light { position: absolute; width: 25vw; height: 120vh; top: -20vh; left: 50%; transform-origin: 50% 100%; filter: blur(25px); opacity: 0.45; mix-blend-mode: screen; z-index: 1; pointer-events: none; }
+.light:nth-child(1) { background: linear-gradient(to bottom, rgba(255,0,0,0.9), transparent); animation: sweep1 3s infinite alternate ease-in-out; }
+.light:nth-child(2) { background: linear-gradient(to bottom, rgba(0,255,255,0.9), transparent); animation: sweep2 3.5s infinite alternate ease-in-out; }
+.light:nth-child(3) { background: linear-gradient(to bottom, rgba(255,0,255,0.9), transparent); animation: sweep3 4s infinite alternate ease-in-out; }
+.light:nth-child(4) { background: linear-gradient(to bottom, rgba(255,255,0,0.9), transparent); animation: sweep4 2.8s infinite alternate ease-in-out; }
+@keyframes sweep1 { from { transform: rotate(-60deg); } to { transform: rotate(60deg); } }
+@keyframes sweep2 { from { transform: rotate(60deg); } to { transform: rotate(-60deg); } }
+@keyframes sweep3 { from { transform: rotate(-35deg); } to { transform: rotate(80deg); } }
+@keyframes sweep4 { from { transform: rotate(80deg); } to { transform: rotate(-80deg); } }
+.yellow-button-text { color: #FFD700; }
+#party-text { position: absolute; top: 10vh; left: 50%; transform: translateX(-50%); z-index: 20; font-size: 6vmin; text-shadow: 0.2vmin 0.2vmin 0.5vmin red; text-align: center; width: 100%; }
+#extinguished-cake-wrapper { position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%); z-index: 10; }
+.dancing-meme { position: absolute; width: 18vmin; transform: translate(-50%, -50%); z-index: 5; }
 
-#scene-party {
-    background-color: #111;
-
-    background-size: cover;
-    background-position: center;
-
-    position: relative;
-
-    overflow: hidden;
-}
-
-#fireworks-canvas {
-    position: absolute;
-
-    inset: 0;
-
-    width: 100%;
-    height: 100%;
-
-    z-index: 2;
-
-    pointer-events: none;
-
-    mix-blend-mode: screen;
-}
-
-.light {
-    position: absolute;
-
-    width: 25vw;
-    height: 120vh;
-
-    top: -20vh;
-    left: 50%;
-
-    transform-origin: 50% 100%;
-
-    filter: blur(25px);
-
-    opacity: 0.45;
-
-    mix-blend-mode: screen;
-
-    z-index: 1;
-
-    pointer-events: none;
-}
-
-.light:nth-child(1) {
-    background:
-        linear-gradient(
-            to bottom,
-            rgba(255,0,0,0.9),
-            transparent
-        );
-
-    animation:
-        sweep1 3s infinite alternate ease-in-out;
-}
-
-.light:nth-child(2) {
-    background:
-        linear-gradient(
-            to bottom,
-            rgba(0,255,255,0.9),
-            transparent
-        );
-
-    animation:
-        sweep2 3.5s infinite alternate ease-in-out;
-}
-
-.light:nth-child(3) {
-    background:
-        linear-gradient(
-            to bottom,
-            rgba(255,0,255,0.9),
-            transparent
-        );
-
-    animation:
-        sweep3 4s infinite alternate ease-in-out;
-}
-
-.light:nth-child(4) {
-    background:
-        linear-gradient(
-            to bottom,
-            rgba(255,255,0,0.9),
-            transparent
-        );
-
-    animation:
-        sweep4 2.8s infinite alternate ease-in-out;
-}
-
-@keyframes sweep1 {
-
-    from {
-        transform: rotate(-60deg);
-    }
-
-    to {
-        transform: rotate(60deg);
-    }
-
-}
-
-@keyframes sweep2 {
-
-    from {
-        transform: rotate(60deg);
-    }
-
-    to {
-        transform: rotate(-60deg);
-    }
-
-}
-
-@keyframes sweep3 {
-
-    from {
-        transform: rotate(-35deg);
-    }
-
-    to {
-        transform: rotate(80deg);
-    }
-
-}
-
-@keyframes sweep4 {
-
-    from {
-        transform: rotate(80deg);
-    }
-
-    to {
-        transform: rotate(-80deg);
-    }
-
-}
-
-.yellow-button-text {
-    color: #FFD700;
-}
-
-#party-text {
-    position: absolute;
-
-    top: 10vh;
-    left: 50%;
-
-    transform: translateX(-50%);
-
-    z-index: 20;
-
-    font-size: 6vmin;
-
-    text-shadow:
-        0.2vmin 0.2vmin 0.5vmin red;
-
-    text-align: center;
-
-    width: 100%;
-}
-
-#extinguished-cake-wrapper {
-    position: absolute;
-
-    top: 55%;
-    left: 50%;
-
-    transform: translate(-50%, -50%);
-
-    z-index: 10;
-}
-
-.dancing-meme {
-    position: absolute;
-
-    width: 18vmin;
-
-    transform: translate(-50%, -50%);
-
-    z-index: 5;
-}
-
-/* ========================================= */
-/* MOBILE LANDSCAPE                        */
-/* ========================================= */
-
+/* MOBILE LANDSCAPE */
 @media (max-width: 1024px) and (orientation: landscape) {
-
-    #slide-container {
-        right: 5vw;
-        width: 48vw;
-    }
-
-    #html-wish-text {
-        font-size: 6vmin;
-    }
-
-    #party-text {
-        font-size: 6vmin;
-    }
-
+    #slide-container { right: 5vw; width: 48vw; }
+    #html-wish-text { font-size: 6vmin; }
+    #party-text { font-size: 6vmin; }
 }
 
-/* ========================================= */
-/* MOBILE PORTRAIT                         */
-/* ========================================= */
-
-@media (max-width: 1024px) and (orientation: portrait) {
-
-    #rotate-message {
-        display: flex;
-    }
-
-}
-
+/* Đã xóa đoạn bắt buộc hiện thông báo xoay ngay từ đầu để nhường chỗ cho nút Tìm hiểu */
 </style>
 </head>
-
 <body>
 
-<!-- ========================================= -->
-<!-- THÔNG BÁO XOAY NGANG                    -->
-<!-- ========================================= -->
-
+<!-- THÔNG BÁO XOAY NGANG -->
 <div id="rotate-message">
-
-    <div class="rotate-icon">
-        📱
-    </div>
-
-    <h2>
-        Vui lòng xoay ngang màn hình
-    </h2>
-
-    <p>
-        Hãy xoay điện thoại sang chế độ ngang<br>
-        để có trải nghiệm tốt nhất nhé!
-    </p>
-
+    <div class="rotate-icon">📱</div>
+    <h2>Vui lòng xoay ngang màn hình</h2>
+    <p>Hãy xoay điện thoại sang chế độ ngang<br>để có trải nghiệm tốt nhất nhé!</p>
 </div>
 
-
-<!-- ========================================= -->
-<!-- SCENE 1                                  -->
-<!-- ========================================= -->
-
+<!-- SCENE 1 -->
 <div id="scene-intro" class="scene active">
-
-    <button
-        id="btn-timhieu"
-        class="yellow-button-text">
-        Tìm hiểu
-    </button>
-
+    <button id="btn-timhieu" class="yellow-button-text">Tìm hiểu</button>
 </div>
 
-
-<!-- ========================================= -->
-<!-- SCENE 2                                  -->
-<!-- ========================================= -->
-
+<!-- SCENE 2 -->
 <div id="scene-history" class="scene">
-
     <div id="slide-container">
-
-        <img
-            id="slide-img"
-            src=""
-            alt="Ảnh lịch sử">
-
+        <img id="slide-img" src="" alt="Ảnh lịch sử">
     </div>
-
-    <button
-        id="btn-tieptuc"
-        class="yellow-button-text">
-
-        Tiếp tục
-
-    </button>
-
+    <button id="btn-tieptuc" class="yellow-button-text">Tiếp tục</button>
 </div>
 
-
-<!-- ========================================= -->
-<!-- SCENE 3                                  -->
-<!-- ========================================= -->
-
+<!-- SCENE 3 -->
 <div id="scene-error" class="scene">
-
-    <img
-        id="error-img"
-        src="anh.jpg"
-        alt="Màn hình lỗi">
-
+    <img id="error-img" src="anh.jpg" alt="Màn hình lỗi">
 </div>
 
-
-<!-- ========================================= -->
-<!-- SCENE 4                                  -->
-<!-- ========================================= -->
-
+<!-- SCENE 4 -->
 <div id="scene-meme" class="scene">
-
-    <img
-        id="meme-troll-img"
-        src=""
-        alt="Meme">
-
-    <div id="troll-text">
-        Hehe
-    </div>
-
+    <img id="meme-troll-img" src="" alt="Meme">
+    <div id="troll-text">Hehe</div>
 </div>
 
-
-<!-- ========================================= -->
-<!-- SCENE 5                                  -->
-<!-- ========================================= -->
-
+<!-- SCENE 5 -->
 <div id="scene-wishes" class="scene">
-
     <canvas id="wish-canvas"></canvas>
-
-    <img
-        id="sticker-img-left"
-        src="sharkthr.gif"
-        alt="Sticker trái">
-
-    <img
-        id="sticker-img-right"
-        src="sharkthr.gif"
-        alt="Sticker phải">
-
+    <img id="sticker-img-left" src="sharkthr.gif" alt="Sticker trái">
+    <img id="sticker-img-right" src="sharkthr.gif" alt="Sticker phải">
     <div id="html-wish-text"></div>
-
-
     <div id="cake-container">
-
-        <div
-            class="html-cake"
-            id="active-cake">
-
-            <div class="cake-candle">
-
-                <div class="cake-flame"></div>
-
-                <div class="smoke"></div>
-
-            </div>
-
-            <div class="cake-sponge"></div>
-
-            <div class="cake-icing"></div>
-
-            <div
-                class="cake-drip"
-                style="left: 2vmin; height: 5vmin;">
-            </div>
-
-            <div
-                class="cake-drip"
-                style="left: 8vmin; height: 4vmin;">
-            </div>
-
-            <div
-                class="cake-drip"
-                style="left: 15vmin; height: 6vmin;">
-            </div>
-
-            <div
-                class="cake-drip"
-                style="left: 20vmin; height: 3.5vmin;">
-            </div>
-
+        <div class="html-cake" id="active-cake">
+            <div class="cake-candle"><div class="cake-flame"></div><div class="smoke"></div></div>
+            <div class="cake-sponge"></div><div class="cake-icing"></div>
+            <div class="cake-drip" style="left: 2vmin; height: 5vmin;"></div>
+            <div class="cake-drip" style="left: 8vmin; height: 4vmin;"></div>
+            <div class="cake-drip" style="left: 15vmin; height: 6vmin;"></div>
+            <div class="cake-drip" style="left: 20vmin; height: 3.5vmin;"></div>
         </div>
-
-        <button id="btn-thoinen">
-            THỔIII
-        </button>
-
+        <button id="btn-thoinen">THỔIII</button>
     </div>
-
 </div>
 
-
-<!-- ========================================= -->
-<!-- SCENE 6: PARTY                          -->
-<!-- ========================================= -->
-
+<!-- SCENE 6: PARTY -->
 <div id="scene-party" class="scene">
-
     <!-- Đèn Disco -->
-
-    <div class="light"></div>
-    <div class="light"></div>
-    <div class="light"></div>
-    <div class="light"></div>
-
-
+    <div class="light"></div><div class="light"></div><div class="light"></div><div class="light"></div>
     <!-- Pháo hoa -->
-
     <canvas id="fireworks-canvas"></canvas>
-
-
-    <h1 id="party-text">
-        CHÚC MỪNG SINH NHẬT NHOA!!!
-    </h1>
-
-
+    <h1 id="party-text">CHÚC MỪNG SINH NHẬT NHOA!!!</h1>
     <div id="extinguished-cake-wrapper">
-
         <div class="html-cake">
-
-            <div class="cake-candle">
-
-                <div class="cake-flame off"></div>
-
-                <div class="smoke"></div>
-
-            </div>
-
-            <div class="cake-sponge"></div>
-
-            <div class="cake-icing"></div>
-
-            <div
-                class="cake-drip"
-                style="left: 2vmin; height: 5vmin;">
-            </div>
-
-            <div
-                class="cake-drip"
-                style="left: 8vmin; height: 4vmin;">
-            </div>
-
-            <div
-                class="cake-drip"
-                style="left: 15vmin; height: 6vmin;">
-            </div>
-
-            <div
-                class="cake-drip"
-                style="left: 20vmin; height: 3.5vmin;">
-            </div>
-
+            <div class="cake-candle"><div class="cake-flame off"></div><div class="smoke"></div></div>
+            <div class="cake-sponge"></div><div class="cake-icing"></div>
+            <div class="cake-drip" style="left: 2vmin; height: 5vmin;"></div>
+            <div class="cake-drip" style="left: 8vmin; height: 4vmin;"></div>
+            <div class="cake-drip" style="left: 15vmin; height: 6vmin;"></div>
+            <div class="cake-drip" style="left: 20vmin; height: 3.5vmin;"></div>
         </div>
-
     </div>
-
 </div>
-
 
 <script>
-
 /* ==========================================
    1. CẤU HÌNH TÀI NGUYÊN
    ========================================== */
-
 const CONFIG = {
-
     images: {
-
-        slidePhotos: [
-            "cmt8.jpg",
-            "cmt81..jpg",
-            "cmt82.jpg",
-            "cmt83.jpg",
-            "cmt84.jpg"
-        ],
-
-        trollMeme:
-            "meo_cuoi_nham_hiem-removebg-preview.png",
-
-        bottomGif:
-            "cholac.webp",
-
-        partyGifs: [
-            "dance1.webp",
-            "dance2.webp",
-            "dance3.webp",
-            "dance4.webp",
-            "dance5.webp",
-            "dance6.webp",
-            "dance7.webp",
-            "dance8.webp",
-            "dance9.webp",
-            "dance10.webp"
-        ],
-
-        wishBg:
-            "nentraitim.jpg",
-
-        partyBg:
-            "sannhay.jpg"
-
+        slidePhotos: ["cmt8.jpg", "cmt81.jpg", "cmt82.jpg", "cmt83.jpg", "cmt84.jpg"], // Đã sửa tên cmt81.jpg
+        trollMeme: "meo_cuoi_nham_hiem-removebg-preview.png",
+        bottomGif: "cholac.webp",
+        partyGifs: ["dance1.webp", "dance2.webp", "dance3.webp", "dance4.webp", "dance5.webp", "dance6.webp", "dance7.webp", "dance8.webp", "dance9.webp", "dance10.webp"],
+        wishBg: "nentraitim.jpg",
+        partyBg: "sannhay.jpg"
     },
-
-
     audio: {
-
-        historyBg:
-            "ShortKit-Call of Silence (full version).mp3",
-
-        history1:
-            "ShortKit-Thư kêu gọi nhân dân cả nước Tổng khởi nghĩa 8 1945 Giờ quyết định cho vận mệnh.mp3",
-
-        history2:
-            "hoidongbaocanuoc.mp3",
-
-        trollBg:
-            "ShortKit-Meme Mèo cười nham hiểm.mp3",
-
-        birthdayBg:
-            "ShortKit-Happy Birthday Celebration Piano Music Birthday Party.mp3",
-
-        partyList: [
-            "ShortKit-Mừng sinh nhật cụ Trang kiểu.mp3",
-            "ShortKit-Trả lời @Trang Đô TN chúc Trang sinh nhật vui vẻ nha.mp3",
-            "ShortKit-Trả lời @tetbe9 Một Ngày Chẳng Nắng - Độ Mixi - Ai Cover.mp3"
-        ]
-
+        historyBg: "ShortKit-Call of Silence (full version).mp3",
+        history1: "ShortKit-Thư kêu gọi nhân dân cả nước Tổng khởi nghĩa 8 1945 Giờ quyết định cho vận mệnh.mp3",
+        history2: "hoidongbaocanuoc.mp3",
+        trollBg: "ShortKit-Meme Mèo cười nham hiểm.mp3",
+        birthdayBg: "ShortKit-Happy Birthday Celebration Piano Music Birthday Party.mp3",
+        partyList: ["ShortKit-Mừng sinh nhật cụ Trang kiểu.mp3", "ShortKit-Trả lời @Trang Đô TN chúc Trang sinh nhật vui vẻ nha.mp3", "ShortKit-Trả lời @tetbe9 Một Ngày Chẳng Nắng - Độ Mixi - Ai Cover.mp3"]
     },
-
-
     wishes: [
-
         "Chúc mừng\nsinh nhật HTT!",
-
         "Tuổi mới\nnhiều niềm vui",
-
         "Nuôn nuôn\nhạnh phúc nhé!"
-
     ]
-
 };
-
 
 /* ==========================================
    2. KHỞI TẠO
    ========================================== */
+document.getElementById('scene-wishes').style.backgroundImage = "url('" + CONFIG.images.wishBg + "')";
+document.getElementById('scene-party').style.backgroundImage = "url('" + CONFIG.images.partyBg + "')";
+document.getElementById('meme-troll-img').src = CONFIG.images.trollMeme;
 
-document.getElementById('scene-wishes').style.backgroundImage =
-    "url('" + CONFIG.images.wishBg + "')";
+const scenes = document.querySelectorAll('.scene');
 
-document.getElementById('scene-party').style.backgroundImage =
-    "url('" + CONFIG.images.partyBg + "')";
-
-document.getElementById('meme-troll-img').src =
-    CONFIG.images.trollMeme;
-
-
-const scenes =
-    document.querySelectorAll('.scene');
-
-
-let audioHistoryBg =
-    new Audio(CONFIG.audio.historyBg);
-
-audioHistoryBg.loop = true;
-audioHistoryBg.volume = 0.03;
-
-
-let audioH1 =
-    new Audio(CONFIG.audio.history1);
-
-
-let audioH2 =
-    new Audio(CONFIG.audio.history2);
-
-
-let audioTroll =
-    new Audio(CONFIG.audio.trollBg);
-
-
-let audioBDay =
-    new Audio(CONFIG.audio.birthdayBg);
-
-
-let audioParty =
-    new Audio(CONFIG.audio.partyList[0]);
-
-
+let audioHistoryBg = new Audio(CONFIG.audio.historyBg);
+audioHistoryBg.loop = true; audioHistoryBg.volume = 0.03;
+let audioH1 = new Audio(CONFIG.audio.history1);
+let audioH2 = new Audio(CONFIG.audio.history2);
+let audioTroll = new Audio(CONFIG.audio.trollBg);
+let audioBDay = new Audio(CONFIG.audio.birthdayBg); audioBDay.loop = true;
+let audioParty = new Audio(CONFIG.audio.partyList[0]);
 let historyH2Timer = null;
-
+let hasStarted = false; // Biến đánh dấu người dùng đã ấn Tìm hiểu chưa
 
 /* ==========================================
-   3. PHÁT HIỆN ĐIỆN THOẠI / TABLET
+   3. KIỂM TRA ĐIỆN THOẠI
    ========================================== */
-
 function isMobileDevice() {
-
-    const userAgent =
-        navigator.userAgent ||
-        navigator.vendor ||
-        window.opera ||
-        "";
-
-    // Android, iPhone, iPod và các trình duyệt mobile phổ biến
-    const mobileUA =
-        /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i
-            .test(userAgent);
-
-    // Một số iPad có thể giả lập User-Agent của máy Mac
-    const iPadLike =
-        /iPad/i.test(userAgent) ||
-        (
-            navigator.platform === "MacIntel" &&
-            navigator.maxTouchPoints > 1
-        );
-
-    return mobileUA || iPadLike;
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 }
-
 
 /* ==========================================
    4. KIỂM TRA XOAY NGANG
    ========================================== */
-
 function checkOrientation() {
-
-    const rotateMessage =
-        document.getElementById('rotate-message');
-
-    if (!rotateMessage) return;
-
-    // Máy tính/laptop → không hiện thông báo
-    if (!isMobileDevice()) {
-
+    const rotateMessage = document.getElementById('rotate-message');
+    // Chỉ kiểm tra và bắt xoay ngang SAU KHI đã ấn tìm hiểu
+    if (!isMobileDevice() || !hasStarted) {
         rotateMessage.style.display = 'none';
-        document.body.classList.remove('mobile-portrait');
-
         return;
     }
-
-    // Kiểm tra chiều màn hình hiện tại
-    const isPortrait =
-        window.matchMedia("(orientation: portrait)").matches;
-
-    if (isPortrait) {
-
-        // Điện thoại đang dọc → bắt người dùng xoay ngang
-        rotateMessage.style.display = 'flex';
-        document.body.classList.add('mobile-portrait');
-
+    if (window.innerHeight > window.innerWidth) {
+        rotateMessage.style.display = 'flex'; // Máy đang dọc -> Bắt xoay
     } else {
-
-        // Điện thoại đã ngang → cho xem web
-        rotateMessage.style.display = 'none';
-        document.body.classList.remove('mobile-portrait');
-
+        rotateMessage.style.display = 'none'; // Máy đã ngang -> Chạy tiếp
     }
 }
-
-
-/*
- * Kiểm tra ngay khi mở web
- */
-window.addEventListener(
-    'load',
-    checkOrientation
-);
-
-
-/*
- * Bắt sự kiện khi người dùng xoay điện thoại
- */
-window.addEventListener(
-    'resize',
-    checkOrientation
-);
-
-window.addEventListener(
-    'orientationchange',
-    () => {
-        setTimeout(checkOrientation, 100);
-    }
-);
-
-
-/*
- * Theo dõi trực tiếp thay đổi portrait/landscape
- */
-const orientationQuery =
-    window.matchMedia("(orientation: portrait)");
-
-if (orientationQuery.addEventListener) {
-
-    orientationQuery.addEventListener(
-        'change',
-        checkOrientation
-    );
-
-} else if (orientationQuery.addListener) {
-
-    // Hỗ trợ trình duyệt cũ
-    orientationQuery.addListener(
-        checkOrientation
-    );
-
-}
-
+window.addEventListener('load', checkOrientation);
+window.addEventListener('resize', checkOrientation);
+window.addEventListener('orientationchange', checkOrientation);
 
 /* ==========================================
    5. CHUYỂN SCENE
    ========================================== */
-
 function switchScene(sceneId) {
-
-    scenes.forEach(
-        s => s.classList.remove('active')
-    );
-
-    document
-        .getElementById(sceneId)
-        .classList.add('active');
-
+    scenes.forEach(s => s.classList.remove('active'));
+    document.getElementById(sceneId).classList.add('active');
 }
-
 
 /* ==========================================
    6. FADE AUDIO
    ========================================== */
-
-function fadeVolume(
-    audioElement,
-    startVol,
-    endVol,
-    durationMs
-) {
-
-    const steps = 20;
-
-    const intervalTime =
-        durationMs / steps;
-
-    const volumeStep =
-        (endVol - startVol) / steps;
-
-    let currentStep = 0;
-
-
+function fadeVolume(audioElement, startVol, endVol, durationMs) {
+    const steps = 20; const intervalTime = durationMs / steps; const volumeStep = (endVol - startVol) / steps; let currentStep = 0;
     const fadeTimer = setInterval(() => {
-
         currentStep++;
-
-        audioElement.volume =
-            Math.max(
-                0,
-                Math.min(
-                    1,
-                    startVol +
-                    volumeStep * currentStep
-                )
-            );
-
-
-        if (currentStep >= steps) {
-
-            clearInterval(fadeTimer);
-
-        }
-
+        audioElement.volume = Math.max(0, Math.min(1, startVol + volumeStep * currentStep));
+        if (currentStep >= steps) { clearInterval(fadeTimer); }
     }, intervalTime);
-
 }
 
-
 /* ==========================================
-   7. NÚT TÌM HIỂU
+   7. NÚT TÌM HIỂU (Đã tích hợp auto rotate & unlock âm thanh)
    ========================================== */
-
-document
-    .getElementById('btn-timhieu')
-    .addEventListener(
-        'click',
-        async () => {
-
-
-            /*
-             * Nếu điện thoại đang dọc
-             * → không chạy tiếp
-             */
-
-            if (
-                isMobileDevice() &&
-                window.innerHeight > window.innerWidth
-            ) {
-
-                checkOrientation();
-
-                return;
-
-            }
-
-
-            /*
-             * Fullscreen
-             */
-
-            try {
-
-                await document
-                    .documentElement
-                    .requestFullscreen();
-
-            }
-
-            catch (e) {
-
-                console.log(
-                    "Không thể bật fullscreen:",
-                    e
-                );
-
-            }
-
-
-            /* Chuyển sang scene lịch sử */
-
-            switchScene(
-                'scene-history'
-            );
-
-
-            /* Audio */
-
-            audioHistoryBg.currentTime = 0;
-
-            audioHistoryBg.volume = 0.03;
-
-            audioHistoryBg.play();
-
-            audioH1.play();
-
-
-            /* Slideshow */
-
-            let slideIdx = 0;
-
-            const slideImg =
-                document.getElementById(
-                    'slide-img'
-                );
-
-            slideImg.src =
-                CONFIG.images.slidePhotos[0];
-
-
-            setInterval(() => {
-
-                slideImg.style.opacity = 0;
-
-
-                setTimeout(() => {
-
-                    slideIdx =
-                        (
-                            slideIdx + 1
-                        ) %
-                        CONFIG.images.slidePhotos.length;
-
-
-                    slideImg.src =
-                        CONFIG.images.slidePhotos[
-                            slideIdx
-                        ];
-
-
-                    slideImg.style.opacity = 1;
-
-                }, 800);
-
-
-            }, 3500);
-
-
-            /* Audio lịch sử */
-
-            const playHistory2 = () => {
-
-                if (
-                    historyH2Timer !== null
-                ) {
-
-                    clearTimeout(
-                        historyH2Timer
-                    );
-
-                }
-
-
-                if (
-                    audioH2.paused
-                ) {
-
-                    audioH2.play();
-
-                }
-
-            };
-
-
-            const scheduleHistory2 = () => {
-
-                const startDelay =
-                    Math.max(
-                        0,
-                        (
-                            audioH1.duration - 1
-                        ) * 1000
-                    );
-
-
-                historyH2Timer =
-                    setTimeout(
-                        playHistory2,
-                        startDelay
-                    );
-
-            };
-
-
-            if (
-                Number.isFinite(
-                    audioH1.duration
-                ) &&
-                audioH1.duration > 0
-            ) {
-
-                scheduleHistory2();
-
-            }
-
-            else {
-
-                audioH1.addEventListener(
-                    'loadedmetadata',
-                    scheduleHistory2,
-                    {
-                        once: true
-                    }
-                );
-
-            }
-
-
-            audioH1.onended =
-                playHistory2;
-
-
-            audioH2.onended = () => {
-
-                document
-                    .getElementById(
-                        'btn-tieptuc'
-                    )
-                    .style.display =
-                    'block';
-
-            };
-
-
-            let isBgFadingIn = false;
-
-
-            audioH2.ontimeupdate = () => {
-
-                const timeLeft =
-                    audioH2.duration -
-                    audioH2.currentTime;
-
-
-                if (
-                    audioH2.duration > 0 &&
-                    timeLeft <= 2 &&
-                    !isBgFadingIn
-                ) {
-
-                    isBgFadingIn = true;
-
-
-                    fadeVolume(
-                        audioHistoryBg,
-                        0.03,
-                        1,
-                        2000
-                    );
-
-                }
-
-            };
-
+document.getElementById('btn-timhieu').addEventListener('click', async () => {
+    
+    // Đánh dấu đã ấn nút, bắt đầu kích hoạt hệ thống ép xoay ngang
+    hasStarted = true;
+
+    // 1. Mở Fullscreen
+    try {
+        const docEl = document.documentElement;
+        if (docEl.requestFullscreen) await docEl.requestFullscreen();
+        else if (docEl.webkitRequestFullscreen) await docEl.webkitRequestFullscreen();
+    } catch (e) { console.log("Không thể bật fullscreen:", e); }
+
+    // 2. Ép xoay ngang tự động bằng API (Sẽ thành công trên Android)
+    try {
+        if (screen.orientation && screen.orientation.lock) await screen.orientation.lock('landscape');
+        else if (screen.lockOrientation) screen.lockOrientation('landscape');
+        else if (screen.mozLockOrientation) screen.mozLockOrientation('landscape');
+    } catch (err) { console.log("Thiết bị yêu cầu tự xoay (vd iOS)", err); }
+
+    // 3. Kích hoạt kiểm tra màn hình (để iPhone hiện cảnh báo nếu không tự xoay được)
+    checkOrientation();
+
+    // 4. MỞ KHÓA ÂM THANH trên mobile để tránh lỗi câm tiếng
+    [audioHistoryBg, audioH1, audioH2, audioTroll, audioBDay, audioParty].forEach(audio => {
+        audio.play().then(() => audio.pause()).catch(e => {});
+    });
+
+    // 5. Chuyển scene
+    switchScene('scene-history');
+
+    audioHistoryBg.currentTime = 0; audioHistoryBg.volume = 0.03; audioHistoryBg.play(); audioH1.play();
+
+    // Slideshow
+    let slideIdx = 0;
+    const slideImg = document.getElementById('slide-img');
+    slideImg.src = CONFIG.images.slidePhotos[0];
+    setInterval(() => {
+        slideImg.style.opacity = 0;
+        setTimeout(() => {
+            slideIdx = (slideIdx + 1) % CONFIG.images.slidePhotos.length;
+            slideImg.src = CONFIG.images.slidePhotos[slideIdx];
+            slideImg.style.opacity = 1;
+        }, 800);
+    }, 3500);
+
+    // Audio lịch sử 2
+    const playHistory2 = () => {
+        if (historyH2Timer !== null) clearTimeout(historyH2Timer);
+        if (audioH2.paused) audioH2.play();
+    };
+    const scheduleHistory2 = () => {
+        const startDelay = Math.max(0, (audioH1.duration - 1) * 1000);
+        historyH2Timer = setTimeout(playHistory2, startDelay);
+    };
+    if (Number.isFinite(audioH1.duration) && audioH1.duration > 0) scheduleHistory2();
+    else audioH1.addEventListener('loadedmetadata', scheduleHistory2, { once: true });
+    
+    audioH1.onended = playHistory2;
+    audioH2.onended = () => { document.getElementById('btn-tieptuc').style.display = 'block'; };
+
+    let isBgFadingIn = false;
+    audioH2.ontimeupdate = () => {
+        const timeLeft = audioH2.duration - audioH2.currentTime;
+        if (audioH2.duration > 0 && timeLeft <= 2 && !isBgFadingIn) {
+            isBgFadingIn = true;
+            fadeVolume(audioHistoryBg, 0.03, 1, 2000);
         }
-    );
-
+    };
+});
 
 /* ==========================================
    8. TIẾP TỤC
    ========================================== */
+document.getElementById('btn-tieptuc').addEventListener('click', () => {
+    audioHistoryBg.pause();
+    switchScene('scene-error');
+    
+    // Đánh thức lại âm thanh một lần nữa cho an toàn trên Safari
+    audioTroll.play().then(() => audioTroll.pause()).catch(e=>{});
+    audioBDay.play().then(() => audioBDay.pause()).catch(e=>{});
 
-document
-    .getElementById('btn-tieptuc')
-    .addEventListener(
-        'click',
-        () => {
-
-            audioHistoryBg.pause();
-
-            switchScene(
-                'scene-error'
-            );
-
-
-            setTimeout(() => {
-
-                switchScene(
-                    'scene-meme'
-                );
-
-                startMemeSequence();
-
-            }, 4000);
-
-        }
-    );
-
+    setTimeout(() => {
+        switchScene('scene-meme');
+        startMemeSequence();
+    }, 4000);
+});
 
 /* ==========================================
    9. MEME
    ========================================== */
-
 function startMemeSequence() {
-
     audioTroll.play();
-
-
-    const textEl =
-        document.getElementById(
-            'troll-text'
-        );
-
-
+    const textEl = document.getElementById('troll-text');
     setTimeout(() => {
-
-        textEl.textContent =
-            "Bị lừa rồi nha!!!";
-
-        textEl.style.color =
-            "red";
-
+        textEl.textContent = "Bị lừa rồi nha!!!";
+        textEl.style.color = "red";
     }, 2000);
-
-
     setTimeout(() => {
-
         audioTroll.pause();
-
-        switchScene(
-            'scene-wishes'
-        );
-
+        switchScene('scene-wishes');
         startBirthdaySequence();
-
     }, 4500);
-
 }
-
 
 /* ==========================================
    10. CANVAS TRÁI TIM
    ========================================== */
-
-const canvas =
-    document.getElementById(
-        'wish-canvas'
-    );
-
-
-const ctx =
-    canvas.getContext('2d');
-
-
-let particles = [];
-
-let animationId;
-
-let wishInterval;
-
-let frameCount = 0;
-
-
+const canvas = document.getElementById('wish-canvas');
+const ctx = canvas.getContext('2d');
+let particles = []; let animationId; let wishInterval; let frameCount = 0;
 const MAX_FRAME_PARTICLES = 250;
 
-
-/* ==========================================
-   11. HEART POINT
-   ========================================== */
-
-function getHeartPoint(
-    t,
-    scale,
-    offsetX,
-    offsetY
-) {
-
-    let x =
-        16 *
-        Math.pow(
-            Math.sin(t),
-            3
-        );
-
-
-    let y =
-        -(
-            13 * Math.cos(t)
-            - 5 * Math.cos(2*t)
-            - 2 * Math.cos(3*t)
-            - Math.cos(4*t)
-        );
-
-
-    return {
-
-        x:
-            offsetX +
-            x * scale,
-
-        y:
-            offsetY +
-            y * scale
-
-    };
-
+function getHeartPoint(t, scale, offsetX, offsetY) {
+    let x = 16 * Math.pow(Math.sin(t), 3);
+    let y = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
+    return { x: offsetX + x * scale, y: offsetY + y * scale };
 }
-
-
-/* ==========================================
-   12. HEART PARTICLE
-   ========================================== */
 
 class HeartParticle {
-
-    constructor(
-        side,
-        needFrame,
-        startX,
-        startY
-    ) {
-
-        this.side = side;
-
-        this.dead = false;
-
-
-        let baseSize =
-            Math.min(
-                canvas.width,
-                canvas.height
-            ) * 0.03;
-
-
-        this.size =
-            (
-                Math.random() * 0.5 +
-                0.8
-            ) * baseSize;
-
-
-        if (needFrame) {
-
-            this.type =
-                Math.random() < 0.8
-                    ? 0
-                    : 1;
-
-        }
-
-        else {
-
-            let r =
-                Math.random();
-
-
-            if (r < 0.35)
-                this.type = 1;
-
-            else if (r < 0.7)
-                this.type = 2;
-
-            else
-                this.type = 3;
-
-        }
-
-
-        let speed =
-            (
-                Math.random() * 2 +
-                1
-            ) *
-            (
-                canvas.width / 500
-            );
-
-
-        this.x = startX;
-        this.y = startY;
-
+    constructor(side, needFrame, startX, startY) {
+        this.side = side; this.dead = false;
+        let baseSize = Math.min(canvas.width, canvas.height) * 0.03;
+        this.size = (Math.random() * 0.5 + 0.8) * baseSize;
+        if (needFrame) { this.type = Math.random() < 0.8 ? 0 : 1; } 
+        else { let r = Math.random(); if (r < 0.35) this.type = 1; else if (r < 0.7) this.type = 2; else this.type = 3; }
+        
+        let speed = (Math.random() * 2 + 1) * (canvas.width / 500);
+        this.x = startX; this.y = startY;
 
         if (side === 'left') {
-
-            let angle =
-                -Math.PI / 2 +
-                (
-                    Math.random() *
-                    Math.PI / 6
-                );
-
-
-            this.vx =
-                Math.cos(angle) *
-                speed;
-
-
-            this.vy =
-                Math.sin(angle) *
-                speed;
-
-
-            this.t =
-                Math.PI +
-                (
-                    Math.random() *
-                    Math.PI
-                );
-
+            let angle = -Math.PI / 2 + (Math.random() * Math.PI / 6);
+            this.vx = Math.cos(angle) * speed; this.vy = Math.sin(angle) * speed;
+            this.t = Math.PI + (Math.random() * Math.PI);
+        } else {
+            let angle = -Math.PI / 2 - (Math.random() * Math.PI / 6);
+            this.vx = Math.cos(angle) * speed; this.vy = Math.sin(angle) * speed;
+            this.t = Math.random() * Math.PI;
         }
+        
+        this.wobble = Math.random() * Math.PI * 2;
+        this.wobbleSpeed = Math.random() * 0.03 + 0.01;
 
-        else {
-
-            let angle =
-                -Math.PI / 2 -
-                (
-                    Math.random() *
-                    Math.PI / 6
-                );
-
-
-            this.vx =
-                Math.cos(angle) *
-                speed;
-
-
-            this.vy =
-                Math.sin(angle) *
-                speed;
-
-
-            this.t =
-                Math.random() *
-                Math.PI;
-
-        }
-
-
-        this.wobble =
-            Math.random() *
-            Math.PI *
-            2;
-
-
-        this.wobbleSpeed =
-            Math.random() *
-            0.03 +
-            0.01;
-
-
-        if (this.type !== 3) {
-
-            this.phase =
-                'launch';
-
-
-            this.waitTime =
-                Math.random() *
-                100 +
-                100;
-
-        }
-
-        else {
-
-            this.phase =
-                'float';
-
-        }
-
+        if (this.type !== 3) { this.phase = 'launch'; this.waitTime = Math.random() * 100 + 100; } 
+        else { this.phase = 'float'; }
     }
-
 
     update() {
+        let cx = canvas.width / 2; let cy = canvas.height / 2 - 30;
+        let scale = Math.min(canvas.width, canvas.height) / 45;
 
-        let cx =
-            canvas.width / 2;
-
-
-        let cy =
-            canvas.height / 2 -
-            30;
-
-
-        let scale =
-            Math.min(
-                canvas.width,
-                canvas.height
-            ) / 45;
-
-
-        if (
-            this.type !== 3
-        ) {
-
-            let target =
-                getHeartPoint(
-                    this.t,
-                    scale,
-                    cx,
-                    cy
-                );
-
-
-            this.targetX =
-                target.x;
-
-
-            this.targetY =
-                target.y;
-
+        if (this.type !== 3) {
+            let target = getHeartPoint(this.t, scale, cx, cy);
+            this.targetX = target.x; this.targetY = target.y;
         }
 
+        let textClearanceRadius = scale * 12;
+        let dxC = this.x - cx; let dyC = this.y - cy;
+        let distToCenter = Math.sqrt(dxC * dxC + dyC * dyC);
 
-        let textClearanceRadius =
-            scale * 12;
-
-
-        let dxC =
-            this.x - cx;
-
-
-        let dyC =
-            this.y - cy;
-
-
-        let distToCenter =
-            Math.sqrt(
-                dxC * dxC +
-                dyC * dyC
-            );
-
-
-        if (
-            distToCenter <
-            textClearanceRadius &&
-            this.phase !== 'settled'
-        ) {
-
-            let repelAngle =
-                Math.atan2(
-                    dyC,
-                    dxC
-                );
-
-
-            this.x +=
-                Math.cos(repelAngle) *
-                2;
-
-
-            this.y +=
-                Math.sin(repelAngle) *
-                2;
-
-
-            this.vx +=
-                Math.cos(repelAngle) *
-                0.2;
-
-
-            this.vy +=
-                Math.sin(repelAngle) *
-                0.2;
-
+        if (distToCenter < textClearanceRadius && this.phase !== 'settled') {
+            let repelAngle = Math.atan2(dyC, dxC);
+            this.x += Math.cos(repelAngle) * 2; this.y += Math.sin(repelAngle) * 2;
+            this.vx += Math.cos(repelAngle) * 0.2; this.vy += Math.sin(repelAngle) * 0.2;
         }
 
-
-        if (
-            this.phase === 'launch'
-        ) {
-
-            this.x += this.vx;
-
-            this.y += this.vy;
-
-            this.vy += 0.05;
-
-            this.wobble +=
-                this.wobbleSpeed;
-
-            this.x +=
-                Math.sin(
-                    this.wobble
-                ) * 0.5;
-
-
-            if (
-                this.vy > 0
-            ) {
-
-                this.phase =
-                    'travel';
-
-            }
-
-        }
-
-
-        else if (
-            this.phase === 'travel'
-        ) {
-
-            let dx =
-                this.targetX -
-                this.x;
-
-
-            let dy =
-                this.targetY -
-                this.y;
-
-
-            let dist =
-                Math.sqrt(
-                    dx * dx +
-                    dy * dy
-                );
-
-
-            if (
-                dist > 5
-            ) {
-
-                this.x +=
-                    dx * 0.02;
-
-
-                this.y +=
-                    dy * 0.02;
-
-
-                this.wobble +=
-                    this.wobbleSpeed;
-
-
-                this.x +=
-                    Math.sin(
-                        this.wobble
-                    ) * 1;
-
-            }
-
-            else {
-
-                this.phase =
-                    'settled';
-
-            }
-
-        }
-
-
-        else if (
-            this.phase === 'settled'
-        ) {
-
-            this.wobble +=
-                this.wobbleSpeed;
-
-
-            this.x =
-                this.targetX +
-                Math.sin(
-                    this.wobble
-                ) * 1.5;
-
-
-            this.y =
-                this.targetY +
-                Math.cos(
-                    this.wobble
-                ) * 1.5;
-
-
-            if (
-                this.type === 1 ||
-                this.type === 2
-            ) {
-
+        if (this.phase === 'launch') {
+            this.x += this.vx; this.y += this.vy; this.vy += 0.05;
+            this.wobble += this.wobbleSpeed; this.x += Math.sin(this.wobble) * 0.5;
+            if (this.vy > 0) { this.phase = 'travel'; }
+        } else if (this.phase === 'travel') {
+            let dx = this.targetX - this.x; let dy = this.targetY - this.y;
+            let dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist > 5) {
+                this.x += dx * 0.02; this.y += dy * 0.02;
+                this.wobble += this.wobbleSpeed; this.x += Math.sin(this.wobble) * 1;
+            } else { this.phase = 'settled'; }
+        } else if (this.phase === 'settled') {
+            this.wobble += this.wobbleSpeed;
+            this.x = this.targetX + Math.sin(this.wobble) * 1.5;
+            this.y = this.targetY + Math.cos(this.wobble) * 1.5;
+            if (this.type === 1 || this.type === 2) {
                 this.waitTime--;
-
-
-                if (
-                    this.waitTime <= 0
-                ) {
-
-                    this.phase =
-                        'escape';
-
-
-                    let angleAway =
-                        Math.atan2(
-                            this.y - cy,
-                            this.x - cx
-                        );
-
-
-                    this.vx =
-                        Math.cos(
-                            angleAway
-                        ) *
-                        (
-                            Math.random() *
-                            1 +
-                            0.5
-                        );
-
-
-                    this.vy =
-                        Math.sin(
-                            angleAway
-                        ) *
-                        (
-                            Math.random() *
-                            1 +
-                            0.5
-                        );
-
-
+                if (this.waitTime <= 0) {
+                    this.phase = 'escape';
+                    let angleAway = Math.atan2(this.y - cy, this.x - cx);
+                    this.vx = Math.cos(angleAway) * (Math.random() * 1 + 0.5);
+                    this.vy = Math.sin(angleAway) * (Math.random() * 1 + 0.5);
                     this.vy -= 0.5;
-
                 }
-
             }
-
+        } else if (this.phase === 'escape') {
+            this.x += this.vx; this.y += this.vy; this.wobble += this.wobbleSpeed; this.x += Math.sin(this.wobble) * 1.5;
+            if (this.x < -100 || this.x > canvas.width + 100 || this.y < -100 || this.y > canvas.height + 150) { this.dead = true; }
+        } else if (this.phase === 'float') {
+            this.x += this.vx; this.y += this.vy; this.vy += 0.02;
+            if (this.vy > 1.5) { this.vy = 1.5; }
+            this.wobble += this.wobbleSpeed; this.x += Math.sin(this.wobble) * 2;
+            if (this.y > canvas.height + 150 || this.x < -100 || this.x > canvas.width + 100) { this.dead = true; }
         }
-
-
-        else if (
-            this.phase === 'escape'
-        ) {
-
-            this.x += this.vx;
-
-            this.y += this.vy;
-
-            this.wobble +=
-                this.wobbleSpeed;
-
-
-            this.x +=
-                Math.sin(
-                    this.wobble
-                ) * 1.5;
-
-
-            if (
-                this.x < -100 ||
-                this.x >
-                    canvas.width + 100 ||
-                this.y < -100 ||
-                this.y >
-                    canvas.height + 150
-            ) {
-
-                this.dead = true;
-
-            }
-
-        }
-
-
-        else if (
-            this.phase === 'float'
-        ) {
-
-            this.x += this.vx;
-
-            this.y += this.vy;
-
-            this.vy += 0.02;
-
-
-            if (
-                this.vy > 1.5
-            ) {
-
-                this.vy = 1.5;
-
-            }
-
-
-            this.wobble +=
-                this.wobbleSpeed;
-
-
-            this.x +=
-                Math.sin(
-                    this.wobble
-                ) * 2;
-
-
-            if (
-                this.y >
-                    canvas.height + 150 ||
-                this.x < -100 ||
-                this.x >
-                    canvas.width + 100
-            ) {
-
-                this.dead = true;
-
-            }
-
-        }
-
     }
-
-
-    draw() {
-
-        ctx.fillStyle =
-            '#e180a3';
-
-
-        ctx.font =
-            `${this.size}px Arial`;
-
-
-        ctx.fillText(
-            '❤',
-            this.x,
-            this.y
-        );
-
-    }
-
+    draw() { ctx.fillStyle = '#e180a3'; ctx.font = `${this.size}px Arial`; ctx.fillText('❤', this.x, this.y); }
 }
 
-
-/* ==========================================
-   13. RESIZE HEART CANVAS
-   ========================================== */
-
-function resizeWishCanvas() {
-
-    canvas.width =
-        window.innerWidth;
-
-    canvas.height =
-        window.innerHeight;
-
-}
-
-
-/* ==========================================
-   14. ANIMATE HEART
-   ========================================== */
+function resizeWishCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+window.addEventListener('resize', resizeWishCanvas);
 
 function animateCanvas() {
-
-    ctx.clearRect(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    );
-
-
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     frameCount++;
-
-
-    let currentFrameParticles =
-        particles.filter(
-            p => p.type === 0
-        ).length;
-
-
-    if (
-        frameCount % 12 === 0
-    ) {
-
-        let needFrame =
-            currentFrameParticles <
-            MAX_FRAME_PARTICLES;
-
-
-        let leftSticker =
-            document.getElementById(
-                'sticker-img-left'
-            );
-
-
-        let rightSticker =
-            document.getElementById(
-                'sticker-img-right'
-            );
-
-
-        let rectLeft =
-            leftSticker.getBoundingClientRect();
-
-
-        let rectRight =
-            rightSticker.getBoundingClientRect();
-
-
-        let startLeftX =
-            rectLeft.right -
-            (
-                rectLeft.width * 0.2
-            );
-
-
-        let startLeftY =
-            rectLeft.top +
-            (
-                rectLeft.height * 0.2
-            );
-
-
-        let startRightX =
-            rectRight.left +
-            (
-                rectRight.width * 0.2
-            );
-
-
-        let startRightY =
-            rectRight.top +
-            (
-                rectRight.height * 0.2
-            );
-
-
-        particles.push(
-            new HeartParticle(
-                'left',
-                needFrame,
-                startLeftX,
-                startLeftY
-            )
-        );
-
-
-        particles.push(
-            new HeartParticle(
-                'left',
-                needFrame,
-                startLeftX,
-                startLeftY
-            )
-        );
-
-
-        particles.push(
-            new HeartParticle(
-                'right',
-                needFrame,
-                startRightX,
-                startRightY
-            )
-        );
-
-
-        particles.push(
-            new HeartParticle(
-                'right',
-                needFrame,
-                startRightX,
-                startRightY
-            )
-        );
-
+    let currentFrameParticles = particles.filter(p => p.type === 0).length;
+    if (frameCount % 12 === 0) {
+        let needFrame = currentFrameParticles < MAX_FRAME_PARTICLES;
+        let leftSticker = document.getElementById('sticker-img-left');
+        let rightSticker = document.getElementById('sticker-img-right');
+        let rectLeft = leftSticker.getBoundingClientRect(); let rectRight = rightSticker.getBoundingClientRect();
+        let startLeftX = rectLeft.right - (rectLeft.width * 0.2); let startLeftY = rectLeft.top + (rectLeft.height * 0.2);
+        let startRightX = rectRight.left + (rectRight.width * 0.2); let startRightY = rectRight.top + (rectRight.height * 0.2);
+        
+        particles.push(new HeartParticle('left', needFrame, startLeftX, startLeftY));
+        particles.push(new HeartParticle('left', needFrame, startLeftX, startLeftY));
+        particles.push(new HeartParticle('right', needFrame, startRightX, startRightY));
+        particles.push(new HeartParticle('right', needFrame, startRightX, startRightY));
     }
-
-
-    particles.forEach(
-        p => {
-
-            p.update();
-
-            p.draw();
-
-        }
-    );
-
-
-    particles =
-        particles.filter(
-            p => !p.dead
-        );
-
-
-    animationId =
-        requestAnimationFrame(
-            animateCanvas
-        );
-
+    particles.forEach(p => { p.update(); p.draw(); });
+    particles = particles.filter(p => !p.dead);
+    animationId = requestAnimationFrame(animateCanvas);
 }
-
-
-/* ==========================================
-   15. BIRTHDAY SEQUENCE
-   ========================================== */
 
 function startBirthdaySequence() {
-
     audioBDay.play();
-
-
-    resizeWishCanvas();
-
-
-    particles = [];
-
-    frameCount = 0;
-
-
-    animateCanvas();
-
-
-    const wishEl =
-        document.getElementById(
-            'html-wish-text'
-        );
-
-
+    resizeWishCanvas(); particles = []; frameCount = 0; animateCanvas();
+    const wishEl = document.getElementById('html-wish-text');
     let wishIndex = 0;
-
-
     setTimeout(() => {
-
-        wishEl.innerHTML =
-            CONFIG.wishes[
-                wishIndex
-            ].replace(
-                /\n/g,
-                '<br>'
-            );
-
-
+        wishEl.innerHTML = CONFIG.wishes[wishIndex].replace(/\n/g, '<br>');
         wishEl.style.opacity = 1;
-
-
-        wishInterval =
-            setInterval(() => {
-
-                wishEl.style.opacity = 0;
-
-
-                setTimeout(() => {
-
-                    wishIndex++;
-
-
-                    if (
-                        wishIndex <
-                        CONFIG.wishes.length
-                    ) {
-
-                        wishEl.innerHTML =
-                            CONFIG.wishes[
-                                wishIndex
-                            ].replace(
-                                /\n/g,
-                                '<br>'
-                            );
-
-
-                        wishEl.style.opacity =
-                            1;
-
-                    }
-
-
-                    else {
-
-                        clearInterval(
-                            wishInterval
-                        );
-
-
-                        document
-                            .getElementById(
-                                'cake-container'
-                            )
-                            .style.display =
-                            'flex';
-
-                    }
-
-                }, 800);
-
-            }, 4000);
-
+        wishInterval = setInterval(() => {
+            wishEl.style.opacity = 0;
+            setTimeout(() => {
+                wishIndex++;
+                if (wishIndex < CONFIG.wishes.length) {
+                    wishEl.innerHTML = CONFIG.wishes[wishIndex].replace(/\n/g, '<br>');
+                    wishEl.style.opacity = 1;
+                } else {
+                    clearInterval(wishInterval);
+                    document.getElementById('cake-container').style.display = 'flex';
+                }
+            }, 800);
+        }, 4000);
     }, 2000);
-
 }
-
-
-window.addEventListener(
-    'resize',
-    resizeWishCanvas
-);
-
 
 /* ==========================================
    16. PHÁO HOA
    ========================================== */
+const fwCanvas = document.getElementById('fireworks-canvas');
+const fwCtx = fwCanvas.getContext('2d');
+let fwParticles = []; let fwRockets = [];
 
-const fwCanvas =
-    document.getElementById(
-        'fireworks-canvas'
-    );
+function resizeFwCanvas() { fwCanvas.width = window.innerWidth; fwCanvas.height = window.innerHeight; }
+window.addEventListener('resize', resizeFwCanvas);
 
-
-const fwCtx =
-    fwCanvas.getContext('2d');
-
-
-let fwParticles = [];
-
-let fwRockets = [];
-
-
-/* ==========================================
-   17. RESIZE FIREWORK
-   ========================================== */
-
-function resizeFwCanvas() {
-
-    fwCanvas.width =
-        window.innerWidth;
-
-    fwCanvas.height =
-        window.innerHeight;
-
-}
-
-
-window.addEventListener(
-    'resize',
-    resizeFwCanvas
-);
-
-
-/* ==========================================
-   18. TẠO PHÁO HOA
-   ========================================== */
-
-function createFireworkExplosion(
-    x,
-    y,
-    color
-) {
-
-    for (
-        let i = 0;
-        i < 50;
-        i++
-    ) {
-
-        let angle =
-            Math.random() *
-            Math.PI *
-            2;
-
-
-        let speed =
-            Math.random() *
-            4 +
-            1;
-
-
+function createFireworkExplosion(x, y, color) {
+    for (let i = 0; i < 50; i++) {
+        let angle = Math.random() * Math.PI * 2; let speed = Math.random() * 4 + 1;
         fwParticles.push({
-
-            x: x,
-
-            y: y,
-
-            vx:
-                Math.cos(angle) *
-                speed,
-
-            vy:
-                Math.sin(angle) *
-                speed,
-
-            color: color,
-
-            alpha: 1,
-
-            size:
-                Math.random() *
-                2 +
-                1
-
+            x: x, y: y, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
+            color: color, alpha: 1, size: Math.random() * 2 + 1
         });
-
     }
-
 }
-
-
-/* ==========================================
-   19. ANIMATE FIREWORK
-   ========================================== */
 
 function animateFireworks() {
-
-    fwCtx.fillStyle =
-        'rgba(0, 0, 0, 0.15)';
-
-
-    fwCtx.fillRect(
-        0,
-        0,
-        fwCanvas.width,
-        fwCanvas.height
-    );
-
-
-    if (
-        Math.random() < 0.04
-    ) {
-
+    fwCtx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+    fwCtx.fillRect(0, 0, fwCanvas.width, fwCanvas.height);
+    if (Math.random() < 0.04) {
         fwRockets.push({
-
-            x:
-                Math.random() *
-                fwCanvas.width,
-
-            y:
-                fwCanvas.height,
-
-            targetY:
-                Math.random() *
-                (
-                    fwCanvas.height *
-                    0.4
-                ) +
-                (
-                    fwCanvas.height *
-                    0.1
-                ),
-
-            speed:
-                Math.random() *
-                3 +
-                4,
-
-            color:
-                `hsl(${
-                    Math.random() *
-                    360
-                }, 100%, 60%)`
-
+            x: Math.random() * fwCanvas.width, y: fwCanvas.height,
+            targetY: Math.random() * (fwCanvas.height * 0.4) + (fwCanvas.height * 0.1),
+            speed: Math.random() * 3 + 4,
+            color: `hsl(${Math.random() * 360}, 100%, 60%)`
         });
-
     }
-
-
-    for (
-        let i =
-            fwRockets.length - 1;
-        i >= 0;
-        i--
-    ) {
-
-        let r =
-            fwRockets[i];
-
-
-        r.y -= r.speed;
-
-
-        fwCtx.fillStyle =
-            r.color;
-
-
-        fwCtx.beginPath();
-
-
-        fwCtx.arc(
-            r.x,
-            r.y,
-            2,
-            0,
-            Math.PI * 2
-        );
-
-
-        fwCtx.fill();
-
-
-        if (
-            r.y <=
-            r.targetY
-        ) {
-
-            fwRockets.splice(
-                i,
-                1
-            );
-
-
-            createFireworkExplosion(
-                r.x,
-                r.y,
-                r.color
-            );
-
+    for (let i = fwRockets.length - 1; i >= 0; i--) {
+        let r = fwRockets[i]; r.y -= r.speed;
+        fwCtx.fillStyle = r.color; fwCtx.beginPath(); fwCtx.arc(r.x, r.y, 2, 0, Math.PI * 2); fwCtx.fill();
+        if (r.y <= r.targetY) {
+            fwRockets.splice(i, 1);
+            createFireworkExplosion(r.x, r.y, r.color);
         }
-
     }
-
-
-    for (
-        let i =
-            fwParticles.length - 1;
-        i >= 0;
-        i--
-    ) {
-
-        let p =
-            fwParticles[i];
-
-
-        p.x += p.vx;
-
-        p.y += p.vy;
-
-        p.vy += 0.05;
-
-        p.alpha -= 0.015;
-
-
-        if (
-            p.alpha <= 0
-        ) {
-
-            fwParticles.splice(
-                i,
-                1
-            );
-
-            continue;
-
-        }
-
-
-        fwCtx.globalAlpha =
-            p.alpha;
-
-
-        fwCtx.fillStyle =
-            p.color;
-
-
-        fwCtx.beginPath();
-
-
-        fwCtx.arc(
-            p.x,
-            p.y,
-            p.size,
-            0,
-            Math.PI * 2
-        );
-
-
-        fwCtx.fill();
-
+    for (let i = fwParticles.length - 1; i >= 0; i--) {
+        let p = fwParticles[i]; p.x += p.vx; p.y += p.vy; p.vy += 0.05; p.alpha -= 0.015;
+        if (p.alpha <= 0) { fwParticles.splice(i, 1); continue; }
+        fwCtx.globalAlpha = p.alpha; fwCtx.fillStyle = p.color; fwCtx.beginPath(); fwCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2); fwCtx.fill();
     }
-
-
     fwCtx.globalAlpha = 1;
-
-
-    requestAnimationFrame(
-        animateFireworks
-    );
-
+    requestAnimationFrame(animateFireworks);
 }
-
 
 /* ==========================================
    20. THỔI NẾN
    ========================================== */
-
-document
-    .getElementById('btn-thoinen')
-    .addEventListener(
-        'click',
-        () => {
-
-
-            audioBDay.pause();
-
-
-            document
-                .querySelector(
-                    '#active-cake .cake-flame'
-                )
-                .classList
-                .add('off');
-
-
-            document
-                .getElementById(
-                    'btn-thoinen'
-                )
-                .style.display =
-                'none';
-
-
-            setTimeout(() => {
-
-
-                cancelAnimationFrame(
-                    animationId
-                );
-
-
-                switchScene(
-                    'scene-party'
-                );
-
-
-                resizeFwCanvas();
-
-                animateFireworks();
-
-
-                let currentPartyTrack = 0;
-
-
-                audioParty.play();
-
-
-                audioParty.onended =
-                    () => {
-
-                        currentPartyTrack =
-                            (
-                                currentPartyTrack +
-                                1
-                            ) %
-                            CONFIG.audio.partyList.length;
-
-
-                        audioParty.src =
-                            CONFIG.audio.partyList[
-                                currentPartyTrack
-                            ];
-
-
-                        audioParty.play();
-
-                    };
-
-
-                const partyScene =
-                    document.getElementById(
-                        'scene-party'
-                    );
-
-
-                const bottomGif =
-                    CONFIG.images.bottomGif;
-
-
-                /*
-                 * 3 dưới đáy
-                 * +
-                 * 10 xung quanh
-                 */
-
-                const gifLayout = [
-
-                    {
-                        top: '85%',
-                        left: '25%'
-                    },
-
-                    {
-                        top: '85%',
-                        left: '50%'
-                    },
-
-                    {
-                        top: '85%',
-                        left: '75%'
-                    },
-
-
-                    {
-                        top: '30%',
-                        left: '20%'
-                    },
-
-                    {
-                        top: '45%',
-                        left: '10%'
-                    },
-
-                    {
-                        top: '50%',
-                        left: '30%'
-                    },
-
-                    {
-                        top: '65%',
-                        left: '15%'
-                    },
-
-                    {
-                        top: '35%',
-                        left: '35%'
-                    },
-
-
-                    {
-                        top: '30%',
-                        left: '80%'
-                    },
-
-                    {
-                        top: '45%',
-                        left: '90%'
-                    },
-
-                    {
-                        top: '50%',
-                        left: '70%'
-                    },
-
-                    {
-                        top: '65%',
-                        left: '85%'
-                    },
-
-                    {
-                        top: '35%',
-                        left: '65%'
-                    }
-
-                ];
-
-
-                let availableGifs =
-                    [
-                        ...CONFIG.images.partyGifs
-                    ];
-
-
-                gifLayout.forEach(
-                    (pos, index) => {
-
-
-                        let img =
-                            document.createElement(
-                                'img'
-                            );
-
-
-                        if (
-                            index < 3
-                        ) {
-
-                            img.src =
-                                bottomGif;
-
-                        }
-
-
-                        else {
-
-                            if (
-                                availableGifs.length === 0
-                            ) {
-
-                                availableGifs =
-                                    [
-                                        ...CONFIG.images.partyGifs
-                                    ];
-
-                            }
-
-
-                            let randomIndex =
-                                Math.floor(
-                                    Math.random() *
-                                    availableGifs.length
-                                );
-
-
-                            img.src =
-                                availableGifs[
-                                    randomIndex
-                                ];
-
-
-                            availableGifs.splice(
-                                randomIndex,
-                                1
-                            );
-
-                        }
-
-
-                        img.className =
-                            'dancing-meme';
-
-
-                        img.style.top =
-                            pos.top;
-
-
-                        img.style.left =
-                            pos.left;
-
-
-                        partyScene.appendChild(
-                            img
-                        );
-
-                    }
-                );
-
-
-            }, 1000);
-
-        }
-    );
-
-
-/* ==========================================
-   21. KIỂM TRA XOAY NGANG LẦN ĐẦU
-   ========================================== */
+document.getElementById('btn-thoinen').addEventListener('click', () => {
+    audioBDay.pause();
+    document.querySelector('#active-cake .cake-flame').classList.add('off');
+    document.getElementById('btn-thoinen').style.display = 'none';
+
+    setTimeout(() => {
+        cancelAnimationFrame(animationId);
+        switchScene('scene-party');
+        resizeFwCanvas(); animateFireworks();
+        
+        let currentPartyTrack = 0;
+        audioParty.play();
+        audioParty.onended = () => {
+            currentPartyTrack = (currentPartyTrack + 1) % CONFIG.audio.partyList.length;
+            audioParty.src = CONFIG.audio.partyList[currentPartyTrack];
+            audioParty.play();
+        };
+
+        const partyScene = document.getElementById('scene-party');
+        const bottomGif = CONFIG.images.bottomGif;
+        const gifLayout = [
+            { top: '85%', left: '25%' }, { top: '85%', left: '50%' }, { top: '85%', left: '75%' },
+            { top: '30%', left: '20%' }, { top: '45%', left: '10%' }, { top: '50%', left: '30%' },
+            { top: '65%', left: '15%' }, { top: '35%', left: '35%' }, { top: '30%', left: '80%' },
+            { top: '45%', left: '90%' }, { top: '50%', left: '70%' }, { top: '65%', left: '85%' },
+            { top: '35%', left: '65%' }
+        ];
+
+        let availableGifs = [...CONFIG.images.partyGifs];
+
+        gifLayout.forEach((pos, index) => {
+            let img = document.createElement('img');
+            if (index < 3) { img.src = bottomGif; } 
+            else {
+                if (availableGifs.length === 0) { availableGifs = [...CONFIG.images.partyGifs]; }
+                let randomIndex = Math.floor(Math.random() * availableGifs.length);
+                img.src = availableGifs[randomIndex];
+                availableGifs.splice(randomIndex, 1);
+            }
+            img.className = 'dancing-meme';
+            img.style.top = pos.top; img.style.left = pos.left;
+            partyScene.appendChild(img);
+        });
+    }, 1000);
+});
 
 checkOrientation();
-
 </script>
 
 </body>
