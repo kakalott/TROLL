@@ -10,12 +10,11 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: Arial, sans-serif; background: #000; overflow: hidden; color: white; }
     
-    /* CẬP NHẬT NÚT BẤM: TO HƠN VÀ CÓ VIỀN ĐỎ */
     button { 
-        padding: 2vh 4vw; /* Tăng padding để nút to hơn */
-        font-size: 3.5vmin; /* Tăng cỡ chữ */
+        padding: 2vh 4vw; 
+        font-size: 3.5vmin; 
         cursor: pointer; 
-        border: 0.4vmin solid #ff0000; /* Khung viền màu đỏ */
+        border: 0.4vmin solid #ff0000; 
         border-radius: 1vmin; 
         font-weight: bold; 
         background: #ff3333; 
@@ -23,7 +22,7 @@
         transition: 0.3s; 
         z-index: 50; 
         position: relative;
-        box-shadow: 0 0 1.5vmin rgba(255, 0, 0, 0.4); /* Thêm chút ánh sáng đỏ bao quanh */
+        box-shadow: 0 0 1.5vmin rgba(255, 0, 0, 0.4); 
     }
     button:hover { background: #ff3333; transform: scale(1.05); box-shadow: 0 0 2.5vmin rgba(255, 0, 0, 0.8); }
 
@@ -96,15 +95,18 @@
     @keyframes sweep2 { from { transform: rotate(60deg); } to { transform: rotate(-60deg); } }
     @keyframes sweep3 { from { transform: rotate(-35deg); } to { transform: rotate(80deg); } }
     @keyframes sweep4 { from { transform: rotate(80deg); } to { transform: rotate(-80deg); } }
+    
     .yellow-button-text {
-        color: #FFD700; /* Màu vàng kim loại */
+        color: #FFD700;
     }
     #party-text { 
         position: absolute; top: 10vh; left: 50%; transform: translateX(-50%); 
         z-index: 20; font-size: 6vmin; text-shadow: 0.2vmin 0.2vmin 0.5vmin red; text-align: center; width: 100%;
     }
     #extinguished-cake-wrapper { position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%); z-index: 10; }
-    .dancing-meme { position: absolute; width: 13vmin; transform: translate(-50%, -50%); z-index: 5; }
+    
+    /* TĂNG KÍCH THƯỚC CÁC GIF LÊN 18VMIN ĐỂ NHÌN ĐẦY ĐẶN HƠN */
+    .dancing-meme { position: absolute; width: 18vmin; transform: translate(-50%, -50%); z-index: 5; }
 </style>
 </head>
 <body>
@@ -142,12 +144,15 @@
         </div>
     </div>
 
+    <!-- MÀN HÌNH PARTY -->
     <div id="scene-party" class="scene">
+        <!-- Đèn Disco -->
         <div class="light"></div>
         <div class="light"></div>
         <div class="light"></div>
         <div class="light"></div>
         
+        <!-- Pháo hoa nền -->
         <canvas id="fireworks-canvas"></canvas>
 
         <h1 id="party-text">CHÚC MỪNG SINH NHẬT!!! 🎉</h1>
@@ -436,24 +441,26 @@
             const partyScene = document.getElementById('scene-party');
             const bottomGif = CONFIG.images.bottomGif; 
             
-            // ĐÃ GIẢM CÒN CHÍNH XÁC 13 VỊ TRÍ (3 DƯỚI ĐÁY + 10 XUNG QUANH)
+            // --- QUY HOẠCH LẠI: 3 DƯỚI ĐÁY + 10 XUNG QUANH (5 Trái, 5 Phải) TRÁNH VÙNG CHỮ Ở TRÊN ---
             const gifLayout = [
                 // 3 Vị trí đáy (Dùng chung bottomGif)
                 { top: '85%', left: '25%' }, 
                 { top: '85%', left: '50%' }, 
                 { top: '85%', left: '75%' }, 
                 
-                // 10 Vị trí nhảy random
-                { top: '65%', left: '15%' }, 
-                { top: '65%', left: '85%' }, 
-                { top: '45%', left: '20%' }, 
-                { top: '45%', left: '80%' }, 
-                { top: '25%', left: '30%' }, 
-                { top: '25%', left: '70%' }, 
-                { top: '15%', left: '50%' },
-                { top: '35%', left: '50%' },
-                { top: '50%', left: '10%' },
-                { top: '50%', left: '90%' }
+                // 5 Vị trí bên Trái (Tránh top < 25%)
+                { top: '30%', left: '20%' }, // Trán trái
+                { top: '45%', left: '10%' }, // Vai trái cao
+                { top: '50%', left: '30%' }, // Sát cạnh trái bánh
+                { top: '65%', left: '15%' }, // Hông trái thấp
+                { top: '35%', left: '35%' }, // Trên góc trái bánh
+                
+                // 5 Vị trí bên Phải (Tránh top < 25%)
+                { top: '30%', left: '80%' }, // Trán phải
+                { top: '45%', left: '90%' }, // Vai phải cao
+                { top: '50%', left: '70%' }, // Sát cạnh phải bánh
+                { top: '65%', left: '85%' }, // Hông phải thấp
+                { top: '35%', left: '65%' }  // Trên góc phải bánh
             ];
 
             let availableGifs = [...CONFIG.images.partyGifs];
