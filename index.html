@@ -2,7 +2,8 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Thêm user-scalable=no để hạn chế lỗi zoom trên điện thoại -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Chuyến Xe Lịch Sử</title>
 <style>
     /* CSS CƠ BẢN */
@@ -16,32 +17,52 @@
     .scene.active { display: flex; opacity: 1;}
 
     /* SCENE 1: INTRO */
-    #scene-intro { background-image: url('bg_cach_mang.jpg'); } /* Đổi tên ảnh nền ở đây */
+    #scene-intro { background-image: url('ki-niem-81-nam.png'); }
     
     /* SCENE 2: HISTORY */
-    #scene-history { background-image: url('bg_lich_su.jpg'); } /* Nền lịch sử */
-    #bacho-img { height: 80vh; object-fit: contain; z-index: 2; }
-    #corner-img { position: absolute; bottom: 20px; right: 20px; width: 200px; opacity: 0.5; transition: opacity 1s ease; z-index: 1;}
-    #btn-tieptuc { display: none; position: absolute; bottom: 10%; z-index: 10; } /* Nút tiếp tục ẩn lúc đầu */
+    #scene-history { background-image: url('ki-niem-81-nam.png'); position: relative; }
+    #slide-container { position: absolute; right: 10%; top: 50%; transform: translateY(-50%); width: 60vw; max-width: 900px; aspect-ratio: 4 / 3; z-index: 2; }
+    #slide-img { width: 100%; height: 100%; object-fit: cover; -webkit-mask-image: radial-gradient(ellipse at center, rgba(0, 0, 0, 1) 50%, rgba(0, 0, 0, 0) 95%); mask-image: radial-gradient(ellipse at center, rgba(0, 0, 0, 1) 50%, rgba(0, 0, 0, 0) 95%); transition: opacity 0.8s ease-in-out; }
+    #btn-tieptuc { display: none; position: absolute; bottom: 10%; z-index: 10; } 
 
-    /* SCENE 3: LỖI (BSOD) */
-    #scene-error { background-color: #0078D7; color: white; font-family: 'Courier New', Courier, monospace; text-align: left; padding: 50px; align-items: flex-start; justify-content: flex-start; }
+    /* SCENE 3: LỖI */
+    #scene-error { background: #000; padding: 0; }
+    #error-img { width: 100vw; height: 100vh; object-fit: cover; }
     
     /* SCENE 4: TROLL MEME */
     #scene-meme { background: #000; text-align: center; }
     #troll-text { font-size: 50px; font-weight: bold; margin-top: 20px; transition: 0.5s; }
 
-    /* SCENE 5: CHÚC MỪNG (Tối dần hiện tim) */
-    #scene-wishes { background: #000; text-align: center; }
-    #heart-img { width: 150px; animation: heartbeat 1s infinite alternate; margin-bottom: 30px; }
-    #wish-text { font-size: 30px; line-height: 1.5; padding: 0 20px; min-height: 100px; transition: opacity 0.5s; }
-    #cake-container { display: none; flex-direction: column; align-items: center; margin-top: 20px; }
-    #cake-img { width: 200px; margin-bottom: 20px; }
-    
-    @keyframes heartbeat {
-        from { transform: scale(1); }
-        to { transform: scale(1.1); }
+    /* SCENE 5: CHÚC MỪNG BẰNG CANVAS (Có thêm Ảnh Nền) */
+    #scene-wishes { 
+        background-color: #000; 
+        background-size: cover; 
+        background-position: center; 
+        position: relative; 
     }
+    #wish-canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; }
+    
+    /* HAI STICKER ĐỐI XỨNG */
+    #sticker-img-left { position: absolute; bottom: 20px; left: 20px; width: 180px; z-index: 3; }
+    #sticker-img-right { position: absolute; bottom: 20px; right: 20px; width: 180px; z-index: 3; transform: scaleX(-1); } 
+    
+    #html-wish-text {
+        position: absolute;
+        top: 40%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 45px;
+        font-weight: bold;
+        color: #ffebf0;
+        text-shadow: 0 0 15px #e180a3, 0 0 5px #fff;
+        text-align: center;
+        width: 80%;
+        z-index: 2;
+        opacity: 0;
+        transition: opacity 0.8s ease-in-out;
+    }
+
+    #cake-container { display: none; position: absolute; top: 80%; left: 50%; transform: translate(-50%, -50%); flex-direction: column; align-items: center; z-index: 10; }
 
     /* SCENE 6: PARTY */
     #scene-party { background: #111; }
@@ -51,24 +72,16 @@
 <body>
 
     <!-- 1. MÀN HÌNH BẮT ĐẦU -->
-    <div id="scene-intro" class="scene active">
-        <button id="btn-timhieu">Tìm hiểu</button>
-    </div>
+    <div id="scene-intro" class="scene active"><button id="btn-timhieu">Tìm hiểu</button></div>
 
     <!-- 2. MÀN HÌNH LỊCH SỬ & NGHE NHẠC -->
     <div id="scene-history" class="scene">
-        <img id="corner-img" src="" alt="Góc mờ">
-        <img id="bacho-img" src="bacho.png" alt="Bác Hồ">
+        <div id="slide-container"><img id="slide-img" src="" alt="Ảnh lịch sử"></div>
         <button id="btn-tieptuc">Tiếp tục</button>
     </div>
 
     <!-- 3. MÀN HÌNH LỖI MÁY TÍNH -->
-    <div id="scene-error" class="scene">
-        <h1 style="font-size: 100px; margin: 0;">:(</h1>
-        <h2>Your PC ran into a problem and needs to restart.</h2>
-        <p>We're just collecting some error info, and then we'll restart for you.</p>
-        <p>0% complete</p>
-    </div>
+    <div id="scene-error" class="scene"><img id="error-img" src="anh.jpg" alt="Màn hình lỗi"></div>
 
     <!-- 4. MÀN HÌNH MEME LỪA ĐẢO -->
     <div id="scene-meme" class="scene">
@@ -78,10 +91,13 @@
 
     <!-- 5. MÀN HÌNH LỜI CHÚC & BÁNH SINH NHẬT -->
     <div id="scene-wishes" class="scene">
-        <img id="heart-img" src="heart.png" alt="Trái tim">
-        <div id="wish-text"></div>
+        <canvas id="wish-canvas"></canvas>
+        <img id="sticker-img-left" src="sharkthr.gif" alt="Sticker trái">
+        <img id="sticker-img-right" src="sharkthr.gif" alt="Sticker phải">
+        
+        <div id="html-wish-text"></div>
+
         <div id="cake-container">
-            <img id="cake-img" src="cake.png" alt="Bánh sinh nhật">
             <button id="btn-thoinen">Thổi nến 🎂</button>
         </div>
     </div>
@@ -89,144 +105,390 @@
     <!-- 6. MÀN HÌNH PARTY NẢY MÚA -->
     <div id="scene-party" class="scene">
         <h1 style="z-index: 10; font-size: 50px; text-shadow: 2px 2px 5px red;">CHÚC MỪNG SINH NHẬT!!! 🎉</h1>
-        <!-- Gif sẽ được render bằng JS vào đây -->
     </div>
 
 <script>
     // ==========================================
-    // 1. CẤU HÌNH TÀI NGUYÊN (QUẢN LÝ DỄ NHẤT Ở ĐÂY)
+    // 1. CẤU HÌNH TÀI NGUYÊN 
     // ==========================================
     const CONFIG = {
         images: {
-            cornerPhotos: ["cmt8.jpg", "cmt81.jpg", "cmt82.jpg", "ctm83.jpg","cmt84.jpg"], // Các ảnh thay đổi ở góc màn hình 2
-            partyGifs: ["dance1.gif", "dance2.gif", "dance3.gif", "dance4.gif"] // Meme nhảy múa màn cuối
+            slidePhotos: ["cmt8.jpg", "cmt81..jpg", "cmt82.jpg", "cmt83.jpg", "cmt84.jpg"],
+            partyGifs: ["dance1.gif", "dance2.gif", "dance3.gif", "dance4.gif"],
+            wishBg: "nentraitim.jpg" 
         },
         audio: {
+            historyBg: "ShortKit-Call of Silence (full version).mp3",
             history1: "ShortKit-Thư kêu gọi nhân dân cả nước Tổng khởi nghĩa 8 1945 Giờ quyết định cho vận mệnh.mp3",
             history2: "hoidongbaocanuoc.mp3",
-            waitMusic: "nhac_doi.mp3",
-            birthdayBg: "nhac_sinh_nhat.mp3",
-            partyList: ["party1.mp3", "party2.mp3", "party3.mp3"]
+            birthdayBg: "ShortKit-Happy Birthday Celebration Piano Music Birthday Party.mp3",
+            partyList: ["ShortKit-Mừng sinh nhật cụ Trang kiểu.mp3", "ShortKit-Trả lời @Trang Đô TN chúc Trang sinh nhật vui vẻ nha.mp3", "ShortKit-Trả lời @tetbe9 Một Ngày Chẳng Nắng - Độ Mixi - Ai Cover.mp3"]
         },
         wishes: [
-            "Đang tải dữ liệu...",
-            "Đùa chút thôi!",
-            "Chúc mừng sinh nhật nhé!",
-            "Tuổi mới thật nhiều niềm vui...",
-            "Thành công trong học tập và công việc!",
-            "Và mãi mãi hạnh phúc nha. Bấm thổi nến đi!" // Lời chúc cuối
+            "Chúc mừng\nsinh nhật!",
+            "Tuổi mới\nnhiều niềm vui",
+            "Mãi mãi\nhạnh phúc nhé!"
         ]
     };
 
-    // ==========================================
-    // 2. BIẾN TOÀN CỤC & HÀM CHUYỂN CẢNH
-    // ==========================================
+    document.getElementById('scene-wishes').style.backgroundImage = "url('" + CONFIG.images.wishBg + "')";
+
     const scenes = document.querySelectorAll('.scene');
     
-    // Đối tượng Audio
+    let audioHistoryBg = new Audio(CONFIG.audio.historyBg);
+    audioHistoryBg.loop = true;
+    audioHistoryBg.volume = 0.03;
+
     let audioH1 = new Audio(CONFIG.audio.history1);
     let audioH2 = new Audio(CONFIG.audio.history2);
-    let audioWait = new Audio(CONFIG.audio.waitMusic);
     let audioBDay = new Audio(CONFIG.audio.birthdayBg);
     let audioParty = new Audio(CONFIG.audio.partyList[0]);
-    audioWait.loop = true; // Nhạc chờ lặp lại
-
+    let historyH2Timer = null;
+    
     function switchScene(sceneId) {
         scenes.forEach(s => s.classList.remove('active'));
         document.getElementById(sceneId).classList.add('active');
     }
 
-    // ==========================================
-    // 3. LOGIC CÁC GIAI ĐOẠN
-    // ==========================================
+    function fadeVolume(audioElement, startVol, endVol, durationMs) {
+        const steps = 20;
+        const intervalTime = durationMs / steps;
+        const volumeStep = (endVol - startVol) / steps;
+        let currentStep = 0;
 
-    // GIAI ĐOẠN 1 -> 2: Click Tìm hiểu
+        const fadeTimer = setInterval(() => {
+            currentStep++;
+            audioElement.volume = Math.max(0, Math.min(1, startVol + volumeStep * currentStep));
+            if (currentStep >= steps) clearInterval(fadeTimer);
+        }, intervalTime);
+    }
+
+    // ==========================================
+    // 3. LOGIC CÁC GIAI ĐOẠN 
+    // ==========================================
     document.getElementById('btn-timhieu').addEventListener('click', async () => {
         try { await document.documentElement.requestFullscreen(); } catch (e) {}
         
         switchScene('scene-history');
         
-        // Bắt đầu chuỗi nhạc
+        audioHistoryBg.currentTime = 0;
+        audioHistoryBg.volume = 0.03;
+        audioHistoryBg.play();
         audioH1.play();
         
-        // Xử lý góc mờ mờ thay đổi ảnh
-        let cornerIdx = 0;
-        const cornerImg = document.getElementById('corner-img');
-        cornerImg.src = CONFIG.images.cornerPhotos[0];
+        let slideIdx = 0;
+        const slideImg = document.getElementById('slide-img');
+        slideImg.src = CONFIG.images.slidePhotos[0];
         setInterval(() => {
-            cornerIdx = (cornerIdx + 1) % CONFIG.images.cornerPhotos.length;
-            cornerImg.style.opacity = 0; // Hiệu ứng mờ đi
+            slideImg.style.opacity = 0;
             setTimeout(() => {
-                cornerImg.src = CONFIG.images.cornerPhotos[cornerIdx];
-                cornerImg.style.opacity = 0.5; // Hiện lên lại
-            }, 500);
-        }, 3000); // Đổi ảnh mỗi 3 giây
+                slideIdx = (slideIdx + 1) % CONFIG.images.slidePhotos.length;
+                slideImg.src = CONFIG.images.slidePhotos[slideIdx];
+                slideImg.style.opacity = 1;
+            }, 800);
+        }, 3500);
 
-        // Hết nhạc 1 -> chạy nhạc 2
-        audioH1.onended = () => audioH2.play();
+        const playHistory2 = () => {
+            if (historyH2Timer !== null) clearTimeout(historyH2Timer);
+            if (audioH2.paused) audioH2.play();
+        };
+        const scheduleHistory2 = () => {
+            const startDelay = Math.max(0, (audioH1.duration - 1) * 1000);
+            historyH2Timer = setTimeout(playHistory2, startDelay);
+        };
+
+        if (Number.isFinite(audioH1.duration) && audioH1.duration > 0) {
+            scheduleHistory2();
+        } else {
+            audioH1.addEventListener('loadedmetadata', scheduleHistory2, { once: true });
+        }
+        audioH1.onended = playHistory2;
         
-        // Hết nhạc 2 -> chạy nhạc chờ + hiện nút
         audioH2.onended = () => {
-            audioWait.play();
             document.getElementById('btn-tieptuc').style.display = 'block';
+        };
+
+        let isBgFadingIn = false;
+        audioH2.ontimeupdate = () => {
+            const timeLeft = audioH2.duration - audioH2.currentTime;
+            if (audioH2.duration > 0 && timeLeft <= 2 && !isBgFadingIn) {
+                isBgFadingIn = true;
+                fadeVolume(audioHistoryBg, 0.03, 1, 2000);
+            }
         };
     });
 
-    // GIAI ĐOẠN 2 -> 3: Click Tiếp tục -> Lỗi máy tính
     document.getElementById('btn-tieptuc').addEventListener('click', () => {
-        audioWait.pause(); // Tắt nhạc chờ
+        audioHistoryBg.pause(); 
         switchScene('scene-error');
         
-        // Đợi 4 giây ở màn hình lỗi
         setTimeout(() => {
             switchScene('scene-meme');
             startMemeSequence();
         }, 4000);
     });
 
-    // GIAI ĐOẠN 4: Chữ Hehe -> Bị lừa rồi
     function startMemeSequence() {
         const textEl = document.getElementById('troll-text');
         setTimeout(() => {
             textEl.textContent = "Bị lừa rồi nha!!!";
             textEl.style.color = "red";
-        }, 2000); // Đợi 2s đổi chữ
+        }, 2000); 
 
         setTimeout(() => {
             switchScene('scene-wishes');
             startBirthdaySequence();
-        }, 4500); // Đợi thêm 2.5s rồi qua màn sinh nhật
+        }, 4500); 
     }
 
-    // GIAI ĐOẠN 5: Hiện lời chúc + Bánh sinh nhật
+    // ==========================================
+    // 5. CANVAS: CHỐNG ZOOM VÀ CHỐNG XUYÊN TÂM
+    // ==========================================
+    const canvas = document.getElementById('wish-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    let animationId;
+    let wishInterval;
+    let frameCount = 0;
+    
+    const MAX_FRAME_PARTICLES = 250; 
+
+    function getHeartPoint(t, scale, offsetX, offsetY) {
+        let x = 16 * Math.pow(Math.sin(t), 3);
+        let y = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t)); 
+        return { x: offsetX + x * scale, y: offsetY + y * scale };
+    }
+
+    class HeartParticle {
+        constructor(side, needFrame, startX, startY) {
+            this.side = side;
+            this.dead = false;
+            this.size = (Math.random() * 4 + 10) * 2; 
+            
+            if (needFrame) {
+                this.type = Math.random() < 0.8 ? 0 : 1; 
+            } else {
+                let r = Math.random();
+                if (r < 0.35) this.type = 1;
+                else if (r < 0.7) this.type = 2;
+                else this.type = 3; 
+            }
+
+            let speed = Math.random() * 5 + 3; 
+            
+            // X, Y được truyền động từ DOM thay vì Fix cứng
+            this.x = startX;
+            this.y = startY;
+
+            if (side === 'left') {
+                let angle = -Math.PI / 2 + (Math.random() * Math.PI / 6); 
+                this.vx = Math.cos(angle) * speed;
+                this.vy = Math.sin(angle) * speed;
+                // Nửa trái của tim
+                this.t = Math.PI + (Math.random() * Math.PI); 
+            } else {
+                let angle = -Math.PI / 2 - (Math.random() * Math.PI / 6); 
+                this.vx = Math.cos(angle) * speed;
+                this.vy = Math.sin(angle) * speed;
+                // Nửa phải của tim
+                this.t = Math.random() * Math.PI; 
+            }
+            
+            this.wobble = Math.random() * Math.PI * 2;
+            this.wobbleSpeed = Math.random() * 0.03 + 0.01;
+
+            if (this.type !== 3) {
+                this.phase = 'launch'; 
+                this.waitTime = Math.random() * 100 + 100; 
+            } else {
+                this.phase = 'float'; 
+            }
+        }
+
+        update() {
+            let cx = canvas.width / 2;
+            let cy = canvas.height / 2 - 30;
+            let scale = Math.min(canvas.width, canvas.height) / 45; 
+            
+            // Cập nhật Target liên tục để chống méo khi Zoom hoặc Resize
+            if (this.type !== 3) {
+                let target = getHeartPoint(this.t, scale, cx, cy);
+                this.targetX = target.x;
+                this.targetY = target.y;
+            }
+
+            // === LÁ CHẮN TỪ TRƯỜNG CHỐNG XUYÊN TÂM ===
+            // Nếu hạt đang bay lơ lửng mà vô tình trôi vào vùng trung tâm (nơi chứa text)
+            let textClearanceRadius = scale * 12; // Bán kính lá chắn
+            let dxC = this.x - cx;
+            let dyC = this.y - cy;
+            let distToCenter = Math.sqrt(dxC*dxC + dyC*dyC);
+
+            if (distToCenter < textClearanceRadius && this.phase !== 'settled') {
+                // Tạo lực đẩy dạt ra ngoài
+                let repelAngle = Math.atan2(dyC, dxC);
+                this.x += Math.cos(repelAngle) * 2;
+                this.y += Math.sin(repelAngle) * 2;
+                this.vx += Math.cos(repelAngle) * 0.2;
+                this.vy += Math.sin(repelAngle) * 0.2;
+            }
+            // ========================================
+
+            if (this.phase === 'launch') {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.vy += 0.05; 
+
+                this.wobble += this.wobbleSpeed;
+                this.x += Math.sin(this.wobble) * 0.5;
+
+                if (this.vy > 0) {
+                    this.phase = 'travel';
+                }
+            } else if (this.phase === 'travel') {
+                let dx = this.targetX - this.x;
+                let dy = this.targetY - this.y;
+                let dist = Math.sqrt(dx*dx + dy*dy);
+
+                if (dist > 5) {
+                    this.x += dx * 0.02;
+                    this.y += dy * 0.02;
+                    
+                    this.wobble += this.wobbleSpeed;
+                    this.x += Math.sin(this.wobble) * 1;
+                } else {
+                    this.phase = 'settled'; 
+                }
+            } else if (this.phase === 'settled') {
+                this.wobble += this.wobbleSpeed;
+                this.x = this.targetX + Math.sin(this.wobble) * 1.5;
+                this.y = this.targetY + Math.cos(this.wobble) * 1.5;
+
+                if (this.type === 1 || this.type === 2) {
+                    this.waitTime--;
+                    if (this.waitTime <= 0) {
+                        this.phase = 'escape';
+                        let angleAway = Math.atan2(this.y - cy, this.x - cx);
+                        this.vx = Math.cos(angleAway) * (Math.random() * 1 + 0.5);
+                        this.vy = Math.sin(angleAway) * (Math.random() * 1 + 0.5);
+                        this.vy -= 0.5; 
+                    }
+                }
+            } else if (this.phase === 'escape') {
+                this.x += this.vx;
+                this.y += this.vy;
+                
+                this.wobble += this.wobbleSpeed;
+                this.x += Math.sin(this.wobble) * 1.5;
+                
+                if (this.x < -100 || this.x > canvas.width + 100 || this.y < -100 || this.y > canvas.height + 150) {
+                    this.dead = true;
+                }
+            } else if (this.phase === 'float') {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.vy += 0.02; 
+                if (this.vy > 1.5) this.vy = 1.5; 
+
+                this.wobble += this.wobbleSpeed;
+                this.x += Math.sin(this.wobble) * 2;
+
+                if (this.y > canvas.height + 150 || this.x < -100 || this.x > canvas.width + 100) {
+                    this.dead = true;
+                }
+            }
+        }
+
+        draw() {
+            ctx.fillStyle = '#e180a3';
+            ctx.font = `${this.size}px Arial`;
+            ctx.fillText('❤', this.x, this.y);
+        }
+    }
+
+    function resizeWishCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+
+    function animateCanvas() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        frameCount++;
+
+        let currentFrameParticles = particles.filter(p => p.type === 0).length;
+
+        if (frameCount % 12 === 0) {
+            let needFrame = currentFrameParticles < MAX_FRAME_PARTICLES;
+            
+            // Lấy Tọa độ thực tế của 2 ảnh GIF trên màn hình (Sửa lỗi khi bị Zoom)
+            let leftSticker = document.getElementById('sticker-img-left');
+            let rightSticker = document.getElementById('sticker-img-right');
+            
+            let rectLeft = leftSticker.getBoundingClientRect();
+            let rectRight = rightSticker.getBoundingClientRect();
+            
+            // Căn tọa độ phun tim ra từ phần đỉnh đầu của 2 Sticker
+            let startLeftX = rectLeft.right - 40;
+            let startLeftY = rectLeft.top + 20;
+            
+            let startRightX = rectRight.left + 40;
+            let startRightY = rectRight.top + 20;
+
+            particles.push(new HeartParticle('left', needFrame, startLeftX, startLeftY));
+            particles.push(new HeartParticle('left', needFrame, startLeftX, startLeftY));
+            particles.push(new HeartParticle('right', needFrame, startRightX, startRightY));
+            particles.push(new HeartParticle('right', needFrame, startRightX, startRightY));
+        }
+
+        particles.forEach(p => { p.update(); p.draw(); });
+        
+        particles = particles.filter(p => !p.dead);
+
+        animationId = requestAnimationFrame(animateCanvas);
+    }
+
     function startBirthdaySequence() {
         audioBDay.play();
-        const wishEl = document.getElementById('wish-text');
-        let wishIdx = 0;
+        resizeWishCanvas();
+        
+        particles = [];
+        frameCount = 0;
+        animateCanvas();
 
-        // Cập nhật lời chúc mỗi 3.5 giây
-        let wishInterval = setInterval(() => {
-            wishEl.style.opacity = 0;
-            setTimeout(() => {
-                wishEl.textContent = CONFIG.wishes[wishIdx];
-                wishEl.style.opacity = 1;
+        const wishEl = document.getElementById('html-wish-text');
+        let wishIndex = 0;
+        
+        setTimeout(() => {
+            wishEl.innerHTML = CONFIG.wishes[wishIndex].replace(/\n/g, '<br>');
+            wishEl.style.opacity = 1;
+            
+            wishInterval = setInterval(() => {
+                wishEl.style.opacity = 0; 
                 
-                if (wishIdx === CONFIG.wishes.length - 1) {
-                    clearInterval(wishInterval); // Dừng chạy lời chúc
-                    document.getElementById('cake-container').style.display = 'flex'; // Hiện bánh & Nút
-                } else {
-                    wishIdx++;
-                }
-            }, 500); // 0.5s để đổi text lúc mờ
-        }, 3500); 
+                setTimeout(() => {
+                    wishIndex++;
+                    if (wishIndex < CONFIG.wishes.length) {
+                        wishEl.innerHTML = CONFIG.wishes[wishIndex].replace(/\n/g, '<br>');
+                        wishEl.style.opacity = 1; 
+                    } else {
+                        clearInterval(wishInterval); 
+                        document.getElementById('cake-container').style.display = 'flex'; 
+                    }
+                }, 800);
+            }, 4000); 
+        }, 2000);
     }
 
-    // GIAI ĐOẠN 6: Click Thổi Nến -> Bay nhảy
+    window.addEventListener('resize', resizeWishCanvas);
+
+    // ==========================================
+    // 6. GIAI ĐOẠN 6: Click Thổi Nến -> Bay nhảy
+    // ==========================================
     document.getElementById('btn-thoinen').addEventListener('click', () => {
-        audioBDay.pause(); // Tắt nhạc sinh nhật nhẹ nhàng
+        audioBDay.pause(); 
+        cancelAnimationFrame(animationId); 
         switchScene('scene-party');
         
-        // Chạy list nhạc quẩy luân phiên
         let currentPartyTrack = 0;
         audioParty.play();
         audioParty.onended = () => {
@@ -235,18 +497,13 @@
             audioParty.play();
         };
 
-        // Rải ảnh gif ngẫu nhiên khắp màn hình
         const partyScene = document.getElementById('scene-party');
         for (let i = 0; i < 15; i++) {
             let img = document.createElement('img');
-            // Random gif
             img.src = CONFIG.images.partyGifs[Math.floor(Math.random() * CONFIG.images.partyGifs.length)];
             img.className = 'dancing-meme';
-            
-            // Random vị trí
             img.style.top = Math.random() * 80 + 'vh';
             img.style.left = Math.random() * 80 + 'vw';
-            
             partyScene.appendChild(img);
         }
     });
@@ -254,3 +511,5 @@
 </script>
 </body>
 </html>
+
+
