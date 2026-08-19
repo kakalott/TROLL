@@ -77,7 +77,7 @@
     }
     
     #fireworks-canvas {
-        position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none;
+        position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none;mix-blend-mode: screen;
     }
 
     /* Hiệu ứng đèn vũ trường */
@@ -100,7 +100,9 @@
         z-index: 20; font-size: 6vmin; text-shadow: 0.2vmin 0.2vmin 0.5vmin red; text-align: center; width: 100%;
     }
     #extinguished-cake-wrapper { position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%); z-index: 10; }
-    .dancing-meme { position: absolute; width: 15vmin; transform: translate(-50%, -50%); z-index: 5; }
+    
+    /* Chỉnh kích thước cho cân đối khi tăng số lượng GIF */
+    .dancing-meme { position: absolute; width: 13vmin; transform: translate(-50%, -50%); z-index: 5; }
 </style>
 </head>
 <body>
@@ -170,14 +172,9 @@
     const CONFIG = {
         images: {
             slidePhotos: ["cmt8.jpg", "cmt81..jpg", "cmt82.jpg", "cmt83.jpg", "cmt84.jpg"],
-            trollMeme: "meo_cuoi_nham_hiem-removebg-preview.png", 
-            
-            // ẢNH CHỌN RIÊNG CHO 3 VỊ TRÍ DƯỚI ĐÁY
-            bottomGif: "cholac.webp", 
-            
-            // DANH SÁCH ẢNH RANDOM CHO CÁC VỊ TRÍ CÒN LẠI
-            partyGifs: ["cholac.webp", "cholac.webp", "cholac.webp", "cholac.webp"], 
-            
+            trollMeme: "meme_troll.jpg", 
+            bottomGif: "dance_bottom.gif", 
+            partyGifs: ["dance1.gif", "dance2.gif", "dance3.gif", "dance4.gif"], 
             wishBg: "nentraitim.jpg",
             partyBg: "sannhay.jpg" 
         },
@@ -185,7 +182,7 @@
             historyBg: "ShortKit-Call of Silence (full version).mp3",
             history1: "ShortKit-Thư kêu gọi nhân dân cả nước Tổng khởi nghĩa 8 1945 Giờ quyết định cho vận mệnh.mp3",
             history2: "hoidongbaocanuoc.mp3",
-            trollBg: "ShortKit-Meme Mèo cười nham hiểm.mp3", 
+            trollBg: "nhac_troll.mp3", 
             birthdayBg: "ShortKit-Happy Birthday Celebration Piano Music Birthday Party.mp3",
             partyList: ["ShortKit-Mừng sinh nhật cụ Trang kiểu.mp3", "ShortKit-Trả lời @Trang Đô TN chúc Trang sinh nhật vui vẻ nha.mp3", "ShortKit-Trả lời @tetbe9 Một Ngày Chẳng Nắng - Độ Mixi - Ai Cover.mp3"]
         },
@@ -364,7 +361,6 @@
     // 6. GIAI ĐOẠN 6: CHUYỂN CẢNH & PHÁO HOA
     // ==========================================
     
-    // --- KHỞI TẠO CANVAS PHÁO HOA ---
     const fwCanvas = document.getElementById('fireworks-canvas');
     const fwCtx = fwCanvas.getContext('2d');
     let fwParticles = []; let fwRockets = [];
@@ -383,11 +379,9 @@
     }
 
     function animateFireworks() {
-        // Làm mờ bóng mờ (Trailing effect)
         fwCtx.fillStyle = 'rgba(0, 0, 0, 0.15)'; 
         fwCtx.fillRect(0, 0, fwCanvas.width, fwCanvas.height);
         
-        // Bắn ngẫu nhiên pháo hoa từ dưới lên
         if (Math.random() < 0.04) {
             fwRockets.push({
                 x: Math.random() * fwCanvas.width, y: fwCanvas.height,
@@ -397,14 +391,12 @@
             });
         }
 
-        // Cập nhật tên lửa pháo hoa
         for (let i = fwRockets.length - 1; i >= 0; i--) {
             let r = fwRockets[i]; r.y -= r.speed;
             fwCtx.fillStyle = r.color; fwCtx.beginPath(); fwCtx.arc(r.x, r.y, 2, 0, Math.PI * 2); fwCtx.fill();
             if (r.y <= r.targetY) { fwRockets.splice(i, 1); createFireworkExplosion(r.x, r.y, r.color); }
         }
 
-        // Cập nhật các hạt nổ
         for (let i = fwParticles.length - 1; i >= 0; i--) {
             let p = fwParticles[i]; p.x += p.vx; p.y += p.vy; p.vy += 0.05; p.alpha -= 0.015;
             if (p.alpha <= 0) { fwParticles.splice(i, 1); continue; }
@@ -424,7 +416,6 @@
             cancelAnimationFrame(animationId); 
             switchScene('scene-party');
             
-            // KÍCH HOẠT PHÁO HOA
             resizeFwCanvas();
             animateFireworks();
             
@@ -437,28 +428,43 @@
             };
 
             const partyScene = document.getElementById('scene-party');
+            const bottomGif = CONFIG.images.bottomGif; 
             
-            const bottomGif = CONFIG.images.bottomGif; // <== DÙNG ẢNH ĐÃ CHỌN RIÊNG
-            
+            // ĐÃ TĂNG LÊN 12 VỊ TRÍ ĐỂ MÀN HÌNH PARTY THÊM NHỘN NHỊP
             const gifLayout = [
                 { top: '85%', left: '25%' }, // 0. Dưới trái
                 { top: '85%', left: '50%' }, // 1. Dưới giữa
                 { top: '85%', left: '75%' }, // 2. Dưới phải
-                { top: '55%', left: '15%' }, // 3. Hông trái
-                { top: '55%', left: '85%' }, // 4. Hông phải
-                { top: '30%', left: '25%' }, // 5. Trán trái
-                { top: '30%', left: '75%' }  // 6. Trán phải
+                
+                { top: '70%', left: '10%' }, // 3. Hông trái dưới
+                { top: '70%', left: '90%' }, // 4. Hông phải dưới
+                { top: '55%', left: '15%' }, // 5. Hông trái giữa
+                { top: '55%', left: '85%' }, // 6. Hông phải giữa
+                { top: '40%', left: '10%' }, // 7. Hông trái trên
+                { top: '40%', left: '90%' }, // 8. Hông phải trên
+                
+                { top: '25%', left: '25%' }, // 9. Trán trái
+                { top: '25%', left: '75%' }, // 10. Trán phải
+                { top: '20%', left: '50%' }  // 11. Đỉnh đầu
             ];
+
+            // TẠO MỘT HỘP CHỨA ĐỂ RÚT THĂM CHỐNG TRÙNG LẶP
+            let availableGifs = [...CONFIG.images.partyGifs];
 
             gifLayout.forEach((pos, index) => {
                 let img = document.createElement('img');
                 
-                // NẾU LÀ 3 ẢNH DƯỚI ĐÁY -> DÙNG ẢNH CHỌN RIÊNG
                 if (index < 3) {
+                    // 3 con ở đáy dùng chung ảnh bottomGif
                     img.src = bottomGif;
                 } else {
-                // CÁC ẢNH CÒN LẠI DÙNG RANDOM TỪ PARTY_GIFS
-                    img.src = CONFIG.images.partyGifs[Math.floor(Math.random() * CONFIG.images.partyGifs.length)];
+                    // Thuật toán rút thăm không hoàn lại chống trùng lặp
+                    if (availableGifs.length === 0) {
+                        availableGifs = [...CONFIG.images.partyGifs]; // Nếu hộp rỗng, nạp lại
+                    }
+                    let randomIndex = Math.floor(Math.random() * availableGifs.length);
+                    img.src = availableGifs[randomIndex];
+                    availableGifs.splice(randomIndex, 1); // Rút ra rồi thì xóa khỏi hộp
                 }
                 
                 img.className = 'dancing-meme';
