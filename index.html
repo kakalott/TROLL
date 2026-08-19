@@ -10,20 +10,22 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: Arial, sans-serif; background: #000; overflow: hidden; color: white; }
     
+    /* CẬP NHẬT NÚT BẤM: TO HƠN VÀ CÓ VIỀN ĐỎ */
     button { 
-        padding: 1.5vh 3vw; 
-        font-size: 2.5vmin; 
+        padding: 2vh 4vw; /* Tăng padding để nút to hơn */
+        font-size: 3.5vmin; /* Tăng cỡ chữ */
         cursor: pointer; 
-        border: none; 
+        border: 0.4vmin solid #ff0000; /* Khung viền màu đỏ */
         border-radius: 1vmin; 
         font-weight: bold; 
-        background: #ff4757; 
+        background: #ff3333; 
         color: white; 
         transition: 0.3s; 
         z-index: 50; 
         position: relative;
+        box-shadow: 0 0 1.5vmin rgba(255, 0, 0, 0.4); /* Thêm chút ánh sáng đỏ bao quanh */
     }
-    button:hover { background: #ff6b81; transform: scale(1.05); }
+    button:hover { background: #ff3333; transform: scale(1.05); box-shadow: 0 0 2.5vmin rgba(255, 0, 0, 0.8); }
 
     .scene { position: fixed; inset: 0; display: none; justify-content: center; align-items: center; flex-direction: column; width: 100vw; height: 100vh; background-size: cover; background-position: center; transition: opacity 1s ease; opacity: 0;}
     .scene.active { display: flex; opacity: 1;}
@@ -53,7 +55,7 @@
         text-shadow: 0 0 1.5vmin #e180a3, 0 0 0.5vmin #fff;
         text-align: center; width: 80vw; z-index: 2; opacity: 0; transition: opacity 0.8s ease-in-out;
     }
-    #cake-container { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); flex-direction: column; align-items: center; z-index: 10; }
+    #cake-container { display: none; position: absolute; top: 80%; left: 50%; transform: translate(-50%, -50%); flex-direction: column; align-items: center; z-index: 10; }
 
     /* ========================================= */
     /* BÁNH SINH NHẬT BẰNG HTML & CSS            */
@@ -78,10 +80,9 @@
     
     #fireworks-canvas {
         position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none;
-        mix-blend-mode: screen; /* <--- LỆNH CHỐNG MÀU ĐEN CHE NỀN */
+        mix-blend-mode: screen;
     }
 
-    /* Hiệu ứng đèn vũ trường */
     .light {
         position: absolute; width: 25vw; height: 120vh; top: -20vh; left: 50%;
         transform-origin: 50% 100%; filter: blur(25px); opacity: 0.45; mix-blend-mode: screen; z-index: 1; pointer-events: none;
@@ -95,7 +96,9 @@
     @keyframes sweep2 { from { transform: rotate(60deg); } to { transform: rotate(-60deg); } }
     @keyframes sweep3 { from { transform: rotate(-35deg); } to { transform: rotate(80deg); } }
     @keyframes sweep4 { from { transform: rotate(80deg); } to { transform: rotate(-80deg); } }
-
+    .yellow-button-text {
+        color: #FFD700; /* Màu vàng kim loại */
+    }
     #party-text { 
         position: absolute; top: 10vh; left: 50%; transform: translateX(-50%); 
         z-index: 20; font-size: 6vmin; text-shadow: 0.2vmin 0.2vmin 0.5vmin red; text-align: center; width: 100%;
@@ -106,11 +109,11 @@
 </head>
 <body>
 
-    <div id="scene-intro" class="scene active"><button id="btn-timhieu">Tìm hiểu</button></div>
+    <div id="scene-intro" class="scene active"><button id="btn-timhieu" class="yellow-button-text">Tìm hiểu</button></div>
 
     <div id="scene-history" class="scene">
         <div id="slide-container"><img id="slide-img" src="" alt="Ảnh lịch sử"></div>
-        <button id="btn-tieptuc">Tiếp tục</button>
+        <button id="btn-tieptuc" class="yellow-button-text">Tiếp tục</button>
     </div>
 
     <div id="scene-error" class="scene"><img id="error-img" src="anh.jpg" alt="Màn hình lỗi"></div>
@@ -139,15 +142,12 @@
         </div>
     </div>
 
-    <!-- MÀN HÌNH PARTY -->
     <div id="scene-party" class="scene">
-        <!-- Đèn Disco -->
         <div class="light"></div>
         <div class="light"></div>
         <div class="light"></div>
         <div class="light"></div>
         
-        <!-- Pháo hoa nền -->
         <canvas id="fireworks-canvas"></canvas>
 
         <h1 id="party-text">CHÚC MỪNG SINH NHẬT!!! 🎉</h1>
@@ -223,6 +223,13 @@
     // 3. LOGIC CÁC GIAI ĐOẠN 
     // ==========================================
     document.getElementById('btn-timhieu').addEventListener('click', async () => {
+        // KIỂM TRA THIẾT BỊ: Chặn mobile/tablet, chỉ cho phép Laptop/PC
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 1024;
+        if (isMobile) {
+            alert("Hãy dùng laptop để tiếp tục!");
+            return;
+        }
+
         try { await document.documentElement.requestFullscreen(); } catch (e) {}
         switchScene('scene-history');
         
@@ -429,39 +436,26 @@
             const partyScene = document.getElementById('scene-party');
             const bottomGif = CONFIG.images.bottomGif; 
             
-            // ĐÃ TĂNG LÊN 21 VỊ TRÍ ĐỂ SÀN NHẢY ĐÔNG VUI HƠN
+            // ĐÃ GIẢM CÒN CHÍNH XÁC 13 VỊ TRÍ (3 DƯỚI ĐÁY + 10 XUNG QUANH)
             const gifLayout = [
-                // 3 Vị trí đáy (dùng chung bottomGif)
+                // 3 Vị trí đáy (Dùng chung bottomGif)
                 { top: '85%', left: '25%' }, 
                 { top: '85%', left: '50%' }, 
                 { top: '85%', left: '75%' }, 
                 
-                // Lớp hông ngoài (Viền sát mép)
-                { top: '70%', left: '10%' }, 
-                { top: '70%', left: '90%' }, 
-                { top: '55%', left: '12%' }, 
-                { top: '55%', left: '88%' }, 
-                { top: '40%', left: '10%' }, 
-                { top: '40%', left: '90%' }, 
-                
-                // Lớp hông trong (Bao sát bánh kem hơn)
-                { top: '65%', left: '30%' },
-                { top: '65%', left: '70%' },
-                { top: '45%', left: '25%' },
-                { top: '45%', left: '75%' },
-
-                // Lớp trán, viền trên và đỉnh đầu
-                { top: '25%', left: '25%' }, 
-                { top: '25%', left: '75%' }, 
-                { top: '20%', left: '50%' },
+                // 10 Vị trí nhảy random
+                { top: '65%', left: '15%' }, 
+                { top: '65%', left: '85%' }, 
+                { top: '45%', left: '20%' }, 
+                { top: '45%', left: '80%' }, 
+                { top: '25%', left: '30%' }, 
+                { top: '25%', left: '70%' }, 
+                { top: '15%', left: '50%' },
                 { top: '35%', left: '50%' },
-                { top: '15%', left: '10%' },
-                { top: '15%', left: '90%' },
-                { top: '85%', left: '8%' }, 
-                { top: '85%', left: '92%' }
+                { top: '50%', left: '10%' },
+                { top: '50%', left: '90%' }
             ];
 
-            // TẠO HỘP RÚT THĂM CHỐNG TRÙNG LẶP LIÊN TIẾP
             let availableGifs = [...CONFIG.images.partyGifs];
 
             gifLayout.forEach((pos, index) => {
@@ -471,11 +465,11 @@
                     img.src = bottomGif;
                 } else {
                     if (availableGifs.length === 0) {
-                        availableGifs = [...CONFIG.images.partyGifs]; // Hộp rỗng thì nạp lại
+                        availableGifs = [...CONFIG.images.partyGifs]; 
                     }
                     let randomIndex = Math.floor(Math.random() * availableGifs.length);
                     img.src = availableGifs[randomIndex];
-                    availableGifs.splice(randomIndex, 1); // Rút ra rồi thì xóa khỏi hộp
+                    availableGifs.splice(randomIndex, 1); 
                 }
                 
                 img.className = 'dancing-meme';
