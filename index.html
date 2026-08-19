@@ -96,6 +96,16 @@ button:hover {
     color: #ccc;
 }
 
+/* Điện thoại dọc: thông báo phủ toàn màn hình và khóa nội dung phía sau */
+body.mobile-portrait #rotate-message {
+    display: flex !important;
+}
+
+body.mobile-portrait .scene {
+    pointer-events: none;
+}
+
+
 @keyframes rotatePhone {
 
     0% {
@@ -1089,7 +1099,7 @@ let audioTroll =
 
 let audioBDay =
     new Audio(CONFIG.audio.birthdayBg);
-audioBDay.loop = true;
+
 
 let audioParty =
     new Audio(CONFIG.audio.partyList[0]);
@@ -1099,14 +1109,31 @@ let historyH2Timer = null;
 
 
 /* ==========================================
-   3. KIỂM TRA ĐIỆN THOẠI
+   3. PHÁT HIỆN ĐIỆN THOẠI / TABLET
    ========================================== */
 
 function isMobileDevice() {
 
-    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
-        .test(navigator.userAgent);
+    const userAgent =
+        navigator.userAgent ||
+        navigator.vendor ||
+        window.opera ||
+        "";
 
+    // Android, iPhone, iPod và các trình duyệt mobile phổ biến
+    const mobileUA =
+        /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i
+            .test(userAgent);
+
+    // Một số iPad có thể giả lập User-Agent của máy Mac
+    const iPadLike =
+        /iPad/i.test(userAgent) ||
+        (
+            navigator.platform === "MacIntel" &&
+            navigator.maxTouchPoints > 1
+        );
+
+    return mobileUA || iPadLike;
 }
 
 
@@ -1119,50 +1146,40 @@ function checkOrientation() {
     const rotateMessage =
         document.getElementById('rotate-message');
 
+    if (!rotateMessage) return;
 
-    /*
-     * Không phải điện thoại
-     * → không cần thông báo
-     */
-
+    // Máy tính/laptop → không hiện thông báo
     if (!isMobileDevice()) {
 
         rotateMessage.style.display = 'none';
+        document.body.classList.remove('mobile-portrait');
 
         return;
     }
 
+    // Kiểm tra chiều màn hình hiện tại
+    const isPortrait =
+        window.matchMedia("(orientation: portrait)").matches;
 
-    /*
-     * Điện thoại đang dọc
-     * → hiện thông báo
-     */
+    if (isPortrait) {
 
-    if (window.innerHeight > window.innerWidth) {
-
+        // Điện thoại đang dọc → bắt người dùng xoay ngang
         rotateMessage.style.display = 'flex';
+        document.body.classList.add('mobile-portrait');
 
-    }
+    } else {
 
-
-    /*
-     * Điện thoại đã ngang
-     * → ẩn thông báo
-     */
-
-    else {
-
+        // Điện thoại đã ngang → cho xem web
         rotateMessage.style.display = 'none';
+        document.body.classList.remove('mobile-portrait');
 
     }
-
 }
 
 
 /*
  * Kiểm tra ngay khi mở web
  */
-
 window.addEventListener(
     'load',
     checkOrientation
@@ -1170,19 +1187,42 @@ window.addEventListener(
 
 
 /*
- * Khi người dùng xoay điện thoại
+ * Bắt sự kiện khi người dùng xoay điện thoại
  */
-
 window.addEventListener(
     'resize',
     checkOrientation
 );
 
-
 window.addEventListener(
     'orientationchange',
-    checkOrientation
+    () => {
+        setTimeout(checkOrientation, 100);
+    }
 );
+
+
+/*
+ * Theo dõi trực tiếp thay đổi portrait/landscape
+ */
+const orientationQuery =
+    window.matchMedia("(orientation: portrait)");
+
+if (orientationQuery.addEventListener) {
+
+    orientationQuery.addEventListener(
+        'change',
+        checkOrientation
+    );
+
+} else if (orientationQuery.addListener) {
+
+    // Hỗ trợ trình duyệt cũ
+    orientationQuery.addListener(
+        checkOrientation
+    );
+
+}
 
 
 /* ==========================================
