@@ -335,37 +335,23 @@ function fadeVolume(audioElement, startVol, endVol, durationMs) {
    ========================================== */
 document.getElementById('btn-timhieu').addEventListener('click', async () => {
     
-    // Đánh dấu đã ấn nút, bắt đầu kích hoạt hệ thống ép xoay ngang
     hasStarted = true;
 
-    // 1. Mở Fullscreen
-    try {
-        const docEl = document.documentElement;
-        if (docEl.requestFullscreen) await docEl.requestFullscreen();
-        else if (docEl.webkitRequestFullscreen) await docEl.webkitRequestFullscreen();
-    } catch (e) { console.log("Không thể bật fullscreen:", e); }
-
-    // 2. Ép xoay ngang tự động bằng API (Sẽ thành công trên Android)
-    try {
-        if (screen.orientation && screen.orientation.lock) await screen.orientation.lock('landscape');
-        else if (screen.lockOrientation) screen.lockOrientation('landscape');
-        else if (screen.mozLockOrientation) screen.mozLockOrientation('landscape');
-    } catch (err) { console.log("Thiết bị yêu cầu tự xoay (vd iOS)", err); }
-
-    // 3. Kích hoạt kiểm tra màn hình (để iPhone hiện cảnh báo nếu không tự xoay được)
-    checkOrientation();
-
-    // 4. MỞ KHÓA ÂM THANH trên mobile để tránh lỗi câm tiếng
-    [audioHistoryBg, audioH1, audioH2, audioTroll, audioBDay, audioParty].forEach(audio => {
+    // 1. MỞ KHÓA VÀ PHÁT ÂM THANH NGAY LẬP TỨC!
+    // (Tuyệt đối không để lệnh await ở trước khu vực này, trình duyệt mobile sẽ chặn tiếng)
+    [audioH2, audioTroll, audioBDay, audioParty].forEach(audio => {
         audio.play().then(() => audio.pause()).catch(e => {});
     });
 
-    // 5. Chuyển scene
+    audioHistoryBg.currentTime = 0; 
+    audioHistoryBg.volume = 0.03; 
+    audioHistoryBg.play().catch(e=>{}); 
+    audioH1.play().catch(e=>{});
+
+    // 2. Chuyển giao diện
     switchScene('scene-history');
 
-    audioHistoryBg.currentTime = 0; audioHistoryBg.volume = 0.03; audioHistoryBg.play(); audioH1.play();
-
-    // Slideshow
+    // Slideshow Ảnh
     let slideIdx = 0;
     const slideImg = document.getElementById('slide-img');
     slideImg.src = CONFIG.images.slidePhotos[0];
@@ -387,6 +373,7 @@ document.getElementById('btn-timhieu').addEventListener('click', async () => {
         const startDelay = Math.max(0, (audioH1.duration - 1) * 1000);
         historyH2Timer = setTimeout(playHistory2, startDelay);
     };
+    
     if (Number.isFinite(audioH1.duration) && audioH1.duration > 0) scheduleHistory2();
     else audioH1.addEventListener('loadedmetadata', scheduleHistory2, { once: true });
     
@@ -401,6 +388,21 @@ document.getElementById('btn-timhieu').addEventListener('click', async () => {
             fadeVolume(audioHistoryBg, 0.03, 1, 2000);
         }
     };
+
+    // 3. THỰC HIỆN CÁC LỆNH 'AWAIT' SAU CÙNG (Fullscreen, xoay màn hình)
+    try {
+        const docEl = document.documentElement;
+        if (docEl.requestFullscreen) await docEl.requestFullscreen();
+        else if (docEl.webkitRequestFullscreen) await docEl.webkitRequestFullscreen();
+    } catch (e) {}
+
+    try {
+        if (screen.orientation && screen.orientation.lock) await screen.orientation.lock('landscape');
+        else if (screen.lockOrientation) screen.lockOrientation('landscape');
+        else if (screen.mozLockOrientation) screen.mozLockOrientation('landscape');
+    } catch (err) {}
+
+    checkOrientation();
 });
 
 /* ==========================================
